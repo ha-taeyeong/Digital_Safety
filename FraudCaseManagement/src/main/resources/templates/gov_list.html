@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정부·공공기관 사칭 주의 - 보안 프로토콜</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* [전체 배경] Deep Space Gradient */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* [네비게이션] */
+        .nav-bar { max-width: 900px; margin: 0 auto 30px auto; }
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+        .home-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: #fff;
+        }
+
+        /* [헤더 영역] */
+        header { text-align: center; margin-bottom: 50px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        h1 {
+            background: linear-gradient(to right, #ff4d4d, #f9cb28); /* Red to Yellow */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px rgba(255, 77, 77, 0.3);
+        }
+
+        /* [경고 배너] */
+        .warning-banner {
+            background: rgba(50, 0, 0, 0.6);
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 24px;
+            color: #ffcccc;
+            line-height: 1.6;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .warning-highlight {
+            color: #ff4d4d;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+        }
+
+        /* [섹션 타이틀] */
+        .section-title {
+            max-width: 900px;
+            margin: 40px auto 20px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+        .section-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* [기관 버튼 그리드] */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .org-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .org-btn:hover {
+            border-color: #8b5cf6;
+            color: #fff;
+            background: rgba(139, 92, 246, 0.2);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+            transform: translateY(-3px);
+        }
+
+        /* [글쓰기 버튼] */
+        .write-btn {
+            background: linear-gradient(90deg, #d946ef, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(217, 70, 239, 0.3);
+            transition: 0.3s;
+        }
+        .write-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(217, 70, 239, 0.5);
+        }
+
+        /* [리스트 카드] */
+        .board-container { max-width: 900px; margin: 0 auto; }
+        .case-list { display: flex; flex-direction: column; gap: 15px; }
+        
+        .case-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        .case-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .case-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        
+        .case-org {
+            background: rgba(139, 92, 246, 0.2);
+            color: #c4b5fd;
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.2);
+        }
+        .case-date { font-size: 0.85rem; color: rgba(255,255,255,0.4); }
+        
+        .case-title {
+            font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;
+            color: white !important; text-decoration: none; display: block;
+        }
+        .case-title:hover { color: #d946ef !important; text-shadow: 0 0 10px rgba(217, 70, 239, 0.5); }
+        
+        .case-content { font-size: 0.95rem; color: #cbd5e1; line-height: 1.6; white-space: pre-wrap; }
+		.meta-info-list {
+			margin-top: 5px; 
+		    font-size: 0.85rem;
+		    color: #ccc;
+		    display: flex;
+		    gap: 15px;
+		    justify-content: flex-end;
+        }
+        .meta-info-list span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .meta-info-list .views { color: #00d2ff; }
+        .meta-info-list .likes { color: #ff4d4d; }
+		
+        /* [액션 버튼] */
+		.case-actions {
+		    margin-top: 10px; 
+		    display: flex; 
+		    gap: 10px; 
+		}
+        .action-btn {
+            font-size: 0.8rem; padding: 6px 14px;
+            border: 1px solid rgba(255,255,255,0.2); background: transparent;
+            border-radius: 20px; cursor: pointer; color: rgba(255,255,255,0.6);
+            text-decoration: none; transition: 0.3s;
+        }
+        .action-btn:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; }
+
+        /* [페이지네이션] */
+        .pagination .page-link {
+            background-color: transparent; border-color: rgba(255, 255, 255, 0.1); color: #ccc;
+        }
+        .pagination .page-link:hover {
+            background-color: rgba(255, 255, 255, 0.1); color: white;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #8b5cf6; border-color: #8b5cf6; color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+        .pagination .page-item.disabled .page-link {
+            background-color: transparent; border-color: rgba(255, 255, 255, 0.05); color: #555;
+        }
+
+        /* [모달 공통] */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-overlay.active { display: flex; }
+        
+        .modal-box {
+            background: rgba(25, 25, 40, 0.95);
+            border: 1px solid rgba(255,255,255,0.15);
+            width: 90%; max-width: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0,0,0,0.7);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        /* 모달 상단 네온 라인 */
+        .modal-box::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, #d946ef, #8b5cf6);
+        }
+
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-header {
+            padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 1.3rem; font-weight: 800; color: white; }
+        .close-btn { cursor: pointer; font-size: 1.5rem; color: rgba(255,255,255,0.5); border: none; background: none; }
+        .close-btn:hover { color: white; }
+
+        /* [정보 모달 내부] */
+        .official-section { padding: 24px; background-color: rgba(255,255,255,0.03); }
+        .info-row { margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+        
+        .badge-safe {
+            background: rgba(0, 210, 255, 0.2); color: #00d2ff;
+            border: 1px solid #00d2ff;
+            padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+            box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
+        }
+        .link-text, .phone-text { color: #ffffff; font-weight: 500; text-decoration: none; }
+        .link-text:hover { color: #00d2ff; text-decoration: underline; }
+
+        .warning-section {
+            padding: 24px; background-color: rgba(255, 0, 0, 0.05);
+            border-top: 1px solid rgba(255, 77, 77, 0.2);
+        }
+        .warning-header { color: #ff4d4d; font-weight: 800; margin-bottom: 12px; text-shadow: 0 0 5px rgba(255, 77, 77, 0.4); }
+        .warning-content ul { margin: 0; padding-left: 20px; color: #cbd5e1; line-height: 1.6; }
+
+        /* [쓰기 모달 폼 & 입력 필드 스타일] */
+        .form-section { padding: 24px; }
+        .form-label { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: #c4b5fd; text-transform: uppercase; }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%; padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white; font-family: inherit;
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none; border-color: #8b5cf6;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .form-textarea { height: 100px; resize: vertical; min-height: 120px; line-height: 1.6; }
+        .form-select option { background-color: #24243e; color: white; }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #d946ef, #8b5cf6);
+            color: white; border: none; padding: 14px;
+            border-radius: 10px; font-weight: bold; font-size: 1rem;
+            cursor: pointer; margin-top: 10px;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+            transition: 0.3s;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px); box-shadow: 0 0 25px rgba(139, 92, 246, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-bar">
+        <a href="/" class="home-btn">← 메인으로</a>
+    </nav>
+
+    <header>
+        <h1>정부·기관 사칭</h1>
+        <div class="warning-banner">
+            <span style="font-weight: 800; display:block; margin-bottom:10px; font-size: 1.2rem; color: #ff4d4d;">
+                🚨 사칭 주의
+            </span>
+            이 기관들은 공식적인 채용 절차 외에<br>
+            <span class="warning-highlight">텔레그램이나 문자로 절대 입금을 요구하지 않습니다.</span>
+        </div>
+    </header>
+
+    <div class="section-title">
+        <span class="section-text">🏛️ 공식 채널 확인</span>
+    </div>
+    
+    <div class="grid-container">
+        <button class="org-btn" onclick="openInfoModal('moel')">고용노동부</button>
+        <button class="org-btn" onclick="openInfoModal('nts')">국세청</button>
+        <button class="org-btn" onclick="openInfoModal('police')">경찰청</button>
+        <button class="org-btn" onclick="openInfoModal('lh')">LH 한국토지주택공사</button>
+        <button class="org-btn" onclick="openInfoModal('kepco')">한국전력공사</button>
+        <button class="org-btn" onclick="openInfoModal('nps')">국민연금공단</button>
+        <button class="org-btn" onclick="openInfoModal('nhis')">국민건강보험공단</button>
+        <button class="org-btn" onclick="openInfoModal('comwel')">근로복지공단</button>
+    </div>
+
+    <div class="section-title">
+        <span class="section-text">📢 피해 사례</span>
+        <button class="write-btn" onclick="openWriteModal()">새 사례 등록</button>
+    </div>
+
+    <div class="board-container">
+        <div th:if="${cases.isEmpty()}" style="text-align:center; padding:60px; color:rgba(255,255,255,0.4);">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
+            등록된 위협 사례가 없습니다.<br>시스템이 안전합니다.
+        </div>
+
+        <div th:unless="${cases.isEmpty()}">
+            <div class="case-list">
+                <div th:each="item : ${cases}" class="case-card">
+                    <div class="case-header">
+                        <span class="case-org" th:text="${item.orgName + ' 사칭'}">기관명 사칭</span>
+                        <span class="case-date" th:text="${#temporals.format(item.createdDate, 'yyyy.MM.dd')}">2024.12.08</span>
+                    </div>
+                    <a th:href="@{/cases/{id}(id=${item.id})}" class="case-title" th:text="${item.title}">제목</a>
+                    <div class="case-content" th:text="${item.description}">내용</div>
+                    <br>
+					<div class="meta-info-list">
+					    <span class="views">👁️ <span th:text="${item.viewCount}">0</span></span>
+					    <span class="likes">❤️ <span th:text="${item.likeCount}">0</span></span>
+					</div>
+					<div class="case-actions">
+					    <a href="javascript:void(0)" 
+					       th:onclick="|requestEdit(${item.id})|" 
+					       class="action-btn">수정</a>
+
+					    <a href="javascript:void(0)" 
+					       th:onclick="|requestDelete(${item.id})|" 
+					       class="action-btn">삭제</a>
+					</div>
+                </div>
+            </div>
+
+            <nav aria-label="Page navigation" style="margin-top: 40px;">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${cases.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/cases/gov(page=${cases.number - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" 
+                        th:each="page: ${#numbers.sequence(0, cases.totalPages - 1)}"
+                        th:if="${page >= cases.number - 2 and page <= cases.number + 2}"
+                        th:classappend="${page == cases.number} ? 'active'">
+                        <a class="page-link" th:text="${page + 1}" th:href="@{/cases/gov(page=${page})}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${cases.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/cases/gov(page=${cases.number + 1})}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div id="infoModal" class="modal-overlay" onclick="closeModal(event, 'infoModal')">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span id="mTitle" class="modal-title">기관명</span>
+                <button class="close-btn" onclick="closeModalForce('infoModal')">×</button>
+            </div>
+            <div class="official-section">
+                <div class="info-row">
+                    <span class="badge-safe">웹사이트</span>
+                    <a id="mLink" href="#" target="_blank" class="link-text">주소</a>
+                </div>
+                <div class="info-row">
+                    <span class="badge-safe">전화번호</span>
+                    <span id="mPhone" class="phone-text">전화번호</span>
+                </div>
+            </div>
+            <div class="warning-section">
+                <div class="warning-header">🚨 최근 주의</div>
+                <div id="mWarning" class="warning-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="writeModal" class="modal-overlay" onclick="closeModal(event, 'writeModal')">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="modal-title">정부·기관 사칭 사례 등록</span>
+                <button class="close-btn" onclick="closeModalForce('writeModal')">×</button>
+            </div>
+            
+            <div class="form-section">
+                <form name="reportForm" th:action="@{/cases/save}" method="post" onsubmit="return validateForm()">
+                    
+                    <input type="hidden" name="typeId" th:value="${typeId ?: 2}"> 
+    
+					<div class="form-group mb-3">
+					    <label class="form-label">사칭 기관</label>
+					    <select name="agencyId" class="form-select">
+					        <option value="moel">고용노동부</option>
+					        <option value="nts">국세청</option>
+					        <option value="police">경찰청</option>
+					        <option value="lh">LH 한국토지주택공사</option>
+					        <option value="kepco">한국전력공사</option>
+							<option value="nps">국민연금공단</option>
+					        <option value="nhis">국민건강보험공단</option>
+							<option value="comwel">근로복지공단</option>
+							<option value="etc">기타</option>
+					    </select>
+					</div>
+    
+                    <div class="form-group mb-3">
+                        <label class="form-label">핵심 키워드</label>
+                        <input type="text" name="title" class="form-input" placeholder="예: 텔레그램으로 재택알바 제안">
+                    </div>
+    
+                    <div class="form-group mb-3">
+                        <label class="form-label">상세 내용</label>
+                        <textarea name="content" class="form-textarea" placeholder="범죄 정황, URL, 연락처 등을 상세히 기재해주세요."></textarea>
+                    </div>
+    
+                    <div class="form-group mb-3">
+                        <label class="form-label">비밀번호 (수정/삭제용)</label>
+                        <input type="password" name="guestPw" class="form-input" placeholder="비밀번호 4자리 이상">
+                    </div>
+    
+                    <button type="submit" class="submit-btn">등록하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const orgData = {
+            'moel': { name: '고용노동부', url: 'https://www.moel.go.kr', displayUrl: 'www.moel.go.kr', phone: '1350', warnings: ['"재택 알바/쇼핑몰 리뷰" 제안 텔레그램 주의', '앱 설치 유도 문자 주의'] },
+            'nts': { name: '국세청', url: 'https://www.hometax.go.kr', displayUrl: 'www.hometax.go.kr', phone: '126', warnings: ['"종합소득세 환급금 조회" 문자 주의', '세무조사 빙자 금품 요구 주의'] },
+            'police': { name: '경찰청', url: 'https://www.police.go.kr', displayUrl: 'www.police.go.kr', phone: '182', warnings: ['"교통범칙금 과태료" 문자 URL 클릭 금지', '사건 조사 빙자 악성 앱 설치 유도'] },
+            'lh': { name: '한국토지주택공사(LH)', url: 'https://www.lh.or.kr', displayUrl: 'www.lh.or.kr', phone: '1600-1004', warnings: ['"임대주택 당첨" 문자 주의', '보증금 입금 유도 주의'] },
+            'kepco': { name: '한국전력공사', url: 'https://home.kepco.co.kr', displayUrl: 'home.kepco.co.kr', phone: '123', warnings: ['전기요금 미납 단전 협박 문자 주의'] },
+            'nps': { name: '국민연금공단', url: 'https://www.nps.or.kr', displayUrl: 'www.nps.or.kr', phone: '1355', warnings: ['국민연금 환급금 신청 문자 주의'] },
+            'nhis': { name: '국민건강보험공단', url: 'https://www.nhis.or.kr', displayUrl: 'www.nhis.or.kr', phone: '1577-1000', warnings: ['건강검진 대상자 통보 문자 내 URL 주의'] },
+            'comwel': { name: '근로복지공단', url: 'https://www.comwel.or.kr', displayUrl: 'www.comwel.or.kr', phone: '1588-0075', warnings: ['생활안정자금 대출 빙자 사기 주의'] }
+        };
+
+        function openInfoModal(id) {
+            const data = orgData[id];
+            if(!data) return;
+            document.getElementById('mTitle').innerText = data.name;
+            document.getElementById('mLink').href = data.url;
+            document.getElementById('mLink').innerText = data.displayUrl;
+            document.getElementById('mPhone').innerText = data.phone;
+            
+            let ulHtml = '<ul>';
+            data.warnings.forEach(text => { ulHtml += `<li>${text}</li>`; });
+            ulHtml += '</ul>';
+            document.getElementById('mWarning').innerHTML = ulHtml;
+            document.getElementById('infoModal').classList.add('active');
+        }
+
+        function openWriteModal() {
+            const form = document.forms['reportForm'];
+            if(form) form.reset(); 
+            document.getElementById('writeModal').classList.add('active');
+        }
+
+        function closeModal(event, modalId) {
+            if (event.target === document.getElementById(modalId)) {
+                document.getElementById(modalId).classList.remove('active');
+            }
+        }
+        
+        function closeModalForce(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // [수정된 검증 함수] 중복 함수 제거 및 name 속성(content) 수정
+        function validateForm() {
+            const form = document.forms['reportForm'];
+            
+            // DTO 필드명과 일치하는 HTML name 속성 사용
+            const title = form['title'].value.trim();
+            const content = form['content'].value.trim(); // description -> content 로 변경됨
+            const guestPw = form['guestPw'].value.trim();
+
+            if (title === "") {
+                alert("⚠️ 제목을 입력해주세요.");
+                form['title'].focus();
+                return false;
+            }
+
+            if (content === "") {
+                alert("⚠️ 상세 내용을 입력해주세요.");
+                form['content'].focus(); // description -> content 로 변경됨
+                return false;
+            }
+
+            if (guestPw === "") {
+                alert("⚠️ 비밀번호를 입력해주세요.");
+                form['guestPw'].focus();
+                return false;
+            }
+
+            if (!confirm("🚨 등록하시겠습니까?")) {
+                return false;
+            }
+
+            return true;
+        }
+		
+		// [수정 요청 함수]
+	    function requestEdit(id) {
+	        // 1. 비밀번호 입력 받기
+	        const pw = prompt("🔒 수정하려면 비밀번호를 입력하세요:");
+	        
+	        // 2. 입력값이 있을 경우에만 이동
+	        if (pw) {
+	            // URL에 pw 파라미터를 붙여서 이동
+	            // encodeURIComponent는 특수문자 처리를 위해 필수입니다.
+	            location.href = '/cases/' + id + '/edit?pw=' + encodeURIComponent(pw);
+	        }
+	    }
+
+		// [개선된 삭제 요청 함수]
+	    function requestDelete(id) {
+	        // 1. 비밀번호 입력 받기
+	        const pw = prompt("🗑️ 삭제하려면 비밀번호를 입력하세요:");
+	        
+	        // 2. pw가 null이거나(취소), 빈 문자열이면(아무것도 입력 안 함) 중단
+	        if (!pw || pw.trim() === "") {
+	            alert("비밀번호가 입력되지 않았습니다. 취소합니다.");
+	            return;
+	        }
+	        
+	        // 3. 삭제 전 한 번 더 확인
+	        if (confirm("WARNING: 정말로 영구 삭제하시겠습니까?")) {
+	            location.href = '/cases/' + id + '/delete?pw=' + encodeURIComponent(pw.trim());
+	        }
+	    }
+    </script>
+</body>
+</html>

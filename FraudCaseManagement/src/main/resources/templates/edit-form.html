@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>사례 수정 - 보안 관리자</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* [전체 배경] Deep Space Gradient */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* [Glassmorphism 카드] */
+        .glass-card {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            padding: 40px;
+        }
+
+        /* [타이틀] */
+        .page-title {
+            background: linear-gradient(to right, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+
+        /* [라벨] */
+        .form-label {
+            color: #e2e8f0;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        /* [입력 필드 공통] Select, Input, Textarea */
+        .form-control, .form-select {
+            background-color: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff !important;
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        /* 포커스 효과 - Cyan Glow */
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            border-color: #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+            outline: none;
+        }
+
+        /* Select 옵션 배경 (브라우저 기본값 방지) */
+        option {
+            background-color: #24243e;
+            color: white;
+        }
+
+        /* [버튼 스타일] */
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ccc;
+            border-radius: 50px;
+            padding: 10px 25px;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .btn-submit {
+            background: linear-gradient(90deg, #00d2ff, #005bea); /* Cyan to Blue */
+            border: none;
+            color: white;
+            border-radius: 50px;
+            padding: 10px 40px;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 91, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="glass-card">
+    <h2 class="page-title">구인 사례 수정</h2>
+
+    <form th:action="@{/cases/{id}/edit(id=${case.caseId})}" method="post">
+        
+        <input type="hidden" name="guestPw" th:value="${guestPw}">
+
+        <div class="mb-4" th:if="${case.typeId == 2}">
+            <label class="form-label">🏛️ 사칭 기관 변경</label>
+            <select name="agencyId" class="form-select">
+                <option value="moel" th:selected="${case.agency?.id == 'moel'}">고용노동부</option>
+                <option value="nts" th:selected="${case.agency?.id == 'nts'}">국세청</option>
+                <option value="police" th:selected="${case.agency?.id == 'police'}">경찰청</option>
+                <option value="lh" th:selected="${case.agency?.id == 'lh'}">LH 한국토지주택공사</option>
+                <option value="kepco" th:selected="${case.agency?.id == 'kepco'}">한국전력공사</option>
+                <option value="nps" th:selected="${case.agency?.id == 'nps'}">국민연금공단</option>
+                <option value="nhis" th:selected="${case.agency?.id == 'nhis'}">국민건강보험공단</option>
+                <option value="comwel" th:selected="${case.agency?.id == 'comwel'}">근로복지공단</option>
+                <option value="etc" th:selected="${case.agency?.id == 'etc'}">기타</option>
+            </select>
+        </div>
+
+        <div class="mb-4" th:if="${case.typeId == 3}">
+            <label class="form-label">✈️ 텔레그램 사기 유형 변경</label>
+            <select name="agencyId" class="form-select">
+                <option value="tele_invest" th:selected="${case.agency?.id == 'tele_invest'}">주식/코인 투자방</option>
+                <option value="tele_job" th:selected="${case.agency?.id == 'tele_job'}">쇼핑몰/리뷰 알바</option>
+                <option value="tele_family" th:selected="${case.agency?.id == 'tele_family'}">가족/지인 사칭</option>
+                <option value="tele_romance" th:selected="${case.agency?.id == 'tele_romance'}">로맨스 스캠</option>
+                <option value="tele_deepfake" th:selected="${case.agency?.id == 'tele_deepfake'}">딥페이크 협박</option>
+                <option value="etc" th:selected="${case.agency?.id == 'etc'}">기타</option>
+            </select>
+        </div>
+        
+        <div class="mb-4" th:if="${case.typeId == 4}">
+            <label class="form-label">💰 금융 기관 변경</label>
+            <select name="agencyId" class="form-select">
+                <option value="bank_kb" th:selected="${case.agency?.id == 'bank_kb'}">KB국민은행</option>
+                <option value="bank_shinhan" th:selected="${case.agency?.id == 'bank_shinhan'}">신한은행</option>
+                <option value="bank_woori" th:selected="${case.agency?.id == 'bank_woori'}">우리은행</option>
+                <option value="bank_hana" th:selected="${case.agency?.id == 'bank_hana'}">하나은행</option>
+                <option value="bank_nh" th:selected="${case.agency?.id == 'bank_nh'}">NH농협은행</option>
+                <option value="bank_kakao" th:selected="${case.agency?.id == 'bank_kakao'}">카카오뱅크</option>
+                <option value="bank_toss" th:selected="${case.agency?.id == 'bank_toss'}">토스뱅크</option>
+                <option value="fss" th:selected="${case.agency?.id == 'fss'}">금융감독원</option>
+                <option value="card_company" th:selected="${case.agency?.id == 'card_company'}">카드/캐피탈</option>
+                <option value="etc" th:selected="${case.agency?.id == 'etc'}">기타</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">제목</label>
+            <input type="text" name="title" class="form-control" th:value="${case.title}" required>
+        </div>
+
+		<div class="mb-5">
+		    <label class="form-label">상세 내용</label>
+		    <textarea name="content" class="form-control" rows="10" th:text="${case.content}" required></textarea>
+		</div>
+
+        <div class="d-flex justify-content-end align-items-center gap-3">
+			<button type="submit" class="btn-submit">수정</button>
+            <a href="javascript:history.back()" class="btn-cancel">취소</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

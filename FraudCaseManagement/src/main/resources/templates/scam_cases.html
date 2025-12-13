@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구인 사기 주의 - 보안 리포트</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* [전체 배경] Deep Space Gradient */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* [네비게이션] */
+        .nav-bar { max-width: 900px; margin: 0 auto 30px auto; }
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+        .home-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: #fff;
+        }
+
+        /* [헤더 영역] */
+        header { text-align: center; margin-bottom: 50px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        h1 {
+            /* 구인 사기 테마: Purple to Pink */
+            background: linear-gradient(to right, #d946ef, #8b5cf6); 
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px rgba(217, 70, 239, 0.3);
+        }
+
+        /* [경고 배너] */
+        .warning-banner {
+            background: rgba(50, 0, 50, 0.6); /* 보라빛 어두운 배경 */
+            border: 1px solid #d946ef;
+            border-radius: 16px;
+            padding: 24px;
+            color: #f5d0fe;
+            line-height: 1.6;
+            box-shadow: 0 0 20px rgba(217, 70, 239, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .warning-highlight {
+            color: #d946ef;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(217, 70, 239, 0.5);
+        }
+
+        /* [섹션 타이틀] */
+        .section-title {
+            max-width: 900px;
+            margin: 40px auto 20px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+        .section-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* [글쓰기 버튼] */
+        .write-btn {
+            background: linear-gradient(90deg, #d946ef, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(217, 70, 239, 0.3);
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .write-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(217, 70, 239, 0.5);
+            color: white;
+        }
+
+        /* [리스트 카드] */
+        .board-container { max-width: 900px; margin: 0 auto; }
+        .case-list { display: flex; flex-direction: column; gap: 15px; }
+        
+        .case-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        .case-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(217, 70, 239, 0.4); /* Hover 시 핑크빛 */
+            transform: translateY(-2px);
+        }
+
+        .case-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        
+        .case-org {
+            background: rgba(217, 70, 239, 0.1);
+            color: #f0abfc;
+            border: 1px solid rgba(217, 70, 239, 0.5);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            box-shadow: 0 0 8px rgba(217, 70, 239, 0.2);
+        }
+        .case-date { font-size: 0.85rem; color: rgba(255,255,255,0.4); }
+        
+        .case-title {
+            font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;
+            color: white !important; text-decoration: none; display: block;
+        }
+        .case-title:hover { color: #d946ef !important; text-shadow: 0 0 10px rgba(217, 70, 239, 0.5); }
+        
+        .case-content { font-size: 0.95rem; color: #cbd5e1; line-height: 1.6; white-space: pre-wrap; }
+		
+		/* [추가된 메타정보 스타일] */
+        .meta-info-list {
+			margin-top: 5px; 
+		    font-size: 0.85rem;
+		    color: #ccc;
+		    display: flex;
+		    gap: 15px;
+		    justify-content: flex-end;
+        }
+        .meta-info-list span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .meta-info-list .views { color: #00d2ff; }
+        .meta-info-list .likes { color: #ff4d4d; }
+		
+        /* [액션 버튼] */
+		.case-actions {
+		    margin-top: 10px; 
+		    display: flex; 
+		    gap: 10px; 
+		}
+        .action-btn {
+            font-size: 0.8rem; padding: 6px 14px;
+            border: 1px solid rgba(255,255,255,0.2); background: transparent;
+            border-radius: 20px; cursor: pointer; color: rgba(255,255,255,0.6);
+            text-decoration: none; transition: 0.3s;
+        }
+        .action-btn:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; }
+
+        /* [페이지네이션] */
+        .pagination .page-link {
+            background-color: transparent; border-color: rgba(255, 255, 255, 0.1); color: #ccc;
+        }
+        .pagination .page-link:hover {
+            background-color: rgba(255, 255, 255, 0.1); color: white;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #d946ef; border-color: #d946ef; color: white;
+            box-shadow: 0 0 10px rgba(217, 70, 239, 0.5);
+        }
+        .pagination .page-item.disabled .page-link {
+            background-color: transparent; border-color: rgba(255, 255, 255, 0.05); color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-bar">
+        <a href="/" class="home-btn">← 메인으로</a>
+    </nav>
+
+    <header>
+        <h1>구인 사기</h1>
+        <div class="warning-banner">
+            <span style="font-weight: 800; display:block; margin-bottom:10px; font-size: 1.2rem; color: #d946ef;">
+                🚨 고액 알바 주의
+            </span>
+            정상적인 채용 과정에서는 절대로<br>
+            <span class="warning-highlight">선입금, 상품권 구매, 개인 계좌 정보</span>를 요구하지 않습니다.
+        </div>
+    </header>
+
+    <div class="section-title">
+        <span class="section-text">📢 피해 사례</span>
+        
+        <a href="/cases/new?type=1" class="write-btn"
+           onclick="return confirm('⚠️ 주의: 연관성이 부족한 게시글은 관리자에 의해 무통보 삭제될 수 있습니다.\n\n등록하시겠습니까?');">
+           새 사례 등록
+        </a>
+    </div>
+
+    <div class="board-container">
+        <div th:if="${cases.isEmpty()}" style="text-align:center; padding:60px; color:rgba(255,255,255,0.4);">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📂</div>
+            등록된 위협 사례가 없습니다.<br>시스템이 안전합니다.
+        </div>
+
+        <div th:unless="${cases.isEmpty()}">
+            <div class="case-list">
+                <div th:each="item : ${cases}" class="case-card">
+                    <div class="case-header">
+                        <span class="case-org">⚡ JOB SCAM</span>
+                        <span class="case-date" 
+                              th:text="${item.createdDate != null ? #temporals.format(item.createdDate, 'yyyy.MM.dd') : '-'}">
+                        </span>
+                    </div>
+                    
+                    <a th:href="@{/cases/{id}(id=${item.id})}" class="case-title" th:text="${item.title}">제목</a>
+					<div class="case-content" th:text="${item.description}">내용</div>
+					<div class="meta-info-list">
+					    <span class="views">👁️ <span th:text="${item.viewCount}">0</span></span>
+						<span class="likes">❤️ <span th:text="${item.likeCount}">0</span></span>
+					</div>
+                    <div class="case-actions">
+                        <a href="javascript:void(0);" 
+                           class="action-btn"
+                           th:onclick="'askPasswordAndAction(' + ${item.id} + ', \'edit\')'">수정</a>
+                        
+                        <a href="javascript:void(0);" 
+                           class="action-btn"
+                           th:onclick="'askPasswordAndAction(' + ${item.id} + ', \'delete\')'">삭제</a>
+                    </div>
+                </div>
+            </div>
+
+            <nav aria-label="Page navigation" style="margin-top: 40px;">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${cases.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/cases(page=${cases.number - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item" 
+                        th:each="page: ${#numbers.sequence(0, cases.totalPages - 1)}"
+                        th:if="${page >= cases.number - 2 and page <= cases.number + 2}"
+                        th:classappend="${page == cases.number} ? 'active'">
+                        <a class="page-link" th:text="${page + 1}" th:href="@{/cases(page=${page})}">1</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${cases.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/cases(page=${cases.number + 1})}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        function askPasswordAndAction(id, action) {
+            const pw = prompt("게시글 작성 시 입력한 비밀번호를 입력하세요:");
+            
+            if (pw !== null) {
+                const encodedPw = encodeURIComponent(pw);
+                if (action === 'delete') {
+                    location.href = '/cases/' + id + '/delete?pw=' + encodedPw;
+                } else if (action === 'edit') {
+                    location.href = '/cases/' + id + '/edit?pw=' + encodedPw;
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

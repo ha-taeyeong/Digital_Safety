@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>New Report Registration</title>
+    <style>
+        /* [전체 레이아웃 & 배경] */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #131224 0%, #1d1b38 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* [메인 컨테이너] */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            /* 유리 질감 효과 */
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* [헤더 텍스트 - JOB SCAM ALERT 느낌] */
+        h2 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #d68dfc; /* 연한 보라색 */
+            text-shadow: 0 0 10px rgba(214, 141, 252, 0.4);
+        }
+
+        /* [라벨 스타일] */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            margin-left: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #a8a8b3;
+            text-transform: uppercase;
+        }
+
+        /* [입력 필드 그룹] */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        /* [입력창 스타일 - 이미지의 카드 느낌] */
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(30, 30, 50, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #5f5f7a;
+        }
+
+        /* 입력창 포커스 효과 (네온 글로우) */
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #bd00ff;
+            box-shadow: 0 0 10px rgba(189, 0, 255, 0.2);
+            background: rgba(30, 30, 50, 0.9);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+            line-height: 1.5;
+        }
+
+        /* [버튼 영역] */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 50px; /* 둥근 캡슐 모양 */
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        /* [등록 버튼 - + NEW REPORT 스타일] */
+        .btn-submit {
+            background: linear-gradient(90deg, #a74cf2, #fa66fa);
+            color: white;
+            box-shadow: 0 4px 15px rgba(167, 76, 242, 0.4);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(167, 76, 242, 0.6);
+        }
+
+        /* [취소 버튼 - 이미지의 EDIT/DELETE 버튼 스타일] */
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* [뒤로가기 링크 스타일 (상단 좌측)] */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #a8a8b3;
+            text-decoration: none;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        .back-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <a href="#" onclick="history.back()" class="back-link">← 돌아가기</a>
+
+    <h2>새 사례 등록</h2>
+
+    <form th:action="@{/cases/save}" method="post">
+        
+        <input type="hidden" name="typeId" th:value="${targetType}">
+
+        <div class="form-group">
+            <label for="title">사례 제목</label>
+            <input type="text" id="title" name="title" placeholder="피해 사례 제목을 입력하세요 (예: 재택 알바 모집)">
+        </div>
+
+        <div class="form-group">
+            <label for="content">사례 내용</label>
+            <textarea id="content" name="content" placeholder="상세 내용을 입력하세요..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="guestPw">비밀번호</label>
+            <input type="password" id="guestPw" name="guestPw" placeholder="수정/삭제용 비밀번호">
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn-submit">등록하기</button>
+            <button type="button" class="btn-cancel" onclick="history.back()">취소하기</button>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>

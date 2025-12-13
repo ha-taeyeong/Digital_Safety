@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>사기 사례 상세 - 보안 리포트</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ... (스타일 시트 유지) ... */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .glass-panel {
+            width: 100%; max-width: 900px;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); padding: 50px;
+            position: relative; overflow: hidden;
+        }
+        .glass-panel::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #00d2ff, transparent); opacity: 0.7;
+        }
+        .badge-neon {
+            font-size: 0.95rem; padding: 6px 16px; border-radius: 50px; font-weight: 600;
+            border: 1px solid transparent; background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2); margin-right: 12px;
+        }
+        .badge-job { color: #f0abfc; border-color: #d946ef; box-shadow: 0 0 10px rgba(217, 70, 239, 0.3); }
+        .badge-gov { color: #c4b5fd; border-color: #8b5cf6; box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
+        .badge-tele { color: #7dd3fc; border-color: #0ea5e9; box-shadow: 0 0 10px rgba(14, 165, 233, 0.3); }
+        .badge-finance { color: #fda4af; border-color: #f43f5e; box-shadow: 0 0 10px rgba(244, 63, 94, 0.3); }
+        
+        .date-text { color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; letter-spacing: 0.5px; font-family: monospace; }
+        .title-text {
+            font-weight: 800; font-size: 2rem; margin-bottom: 1.5rem; line-height: 1.3;
+            background: linear-gradient(to right, #ffffff, #a0aec0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .agency-name { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+        .content-box {
+            min-height: 250px; white-space: pre-wrap; line-height: 1.8; font-size: 1.05rem;
+            color: #e2e8f0; background: rgba(0, 0, 0, 0.2); border-radius: 16px;
+            padding: 30px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 20px;
+        }
+        .btn-neon-back {
+            color: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px; padding: 10px 25px; transition: 0.3s;
+            text-decoration: none; font-weight: 600; display: inline-block;
+        }
+        .btn-neon-back:hover { background: rgba(255, 255, 255, 0.1); color: white; border-color: white; }
+        .btn-neon-edit {
+            background: transparent; color: #00d2ff; border: 1px solid #00d2ff;
+            border-radius: 30px; padding: 10px 25px; box-shadow: 0 0 10px rgba(0, 210, 255, 0.1);
+            transition: 0.3s; text-decoration: none; font-weight: bold; display: inline-block; cursor: pointer;
+        }
+        .btn-neon-edit:hover { background: #00d2ff; color: #000; box-shadow: 0 0 20px rgba(0, 210, 255, 0.6); }
+        .btn-neon-delete {
+            background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d;
+            border-radius: 30px; padding: 10px 25px; box-shadow: 0 0 10px rgba(255, 77, 77, 0.1);
+            transition: 0.3s; text-decoration: none; font-weight: bold; display: inline-block; cursor: pointer;
+        }
+        .btn-neon-delete:hover { background: #ff4d4d; color: white; box-shadow: 0 0 20px rgba(255, 77, 77, 0.6); }
+
+        /* [추가된 좋아요/조회수 스타일] */
+        .meta-info { color: #718096; font-size: 0.95rem; display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .meta-item { display: flex; align-items: center; gap: 5px; }
+
+        .like-btn {
+            background: rgba(255, 255, 255, 0.1); border: none; padding: 5px 15px; border-radius: 20px;
+            color: #ff4d4d; font-weight: bold; cursor: pointer; transition: 0.3s;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .like-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .like-btn.liked { background: #ff4d4d; color: white; box-shadow: 0 0 15px rgba(255, 77, 77, 0.4); }
+    </style>
+</head>
+<body>
+
+<div class="glass-panel">
+    
+    <div class="d-flex align-items-center justify-content-between mb-4 pb-3" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div class="d-flex align-items-center">
+            <span class="badge-neon badge-job" th:if="${case.typeId == 1}">⚡ 구인 사기</span>
+            <span class="badge-neon badge-gov" th:if="${case.typeId == 2}">🏛️ 기관 사칭</span>
+            <span class="badge-neon badge-tele" th:if="${case.typeId == 3}">✈️ 텔레그램</span>
+            <span class="badge-neon badge-finance" th:if="${case.typeId == 4}">💰 금융 사칭</span>
+        </div>
+        <span class="date-text">
+            LOGGED: <span th:text="${#temporals.format(case.regiDt, 'yyyy.MM.dd HH:mm')}"></span>
+        </span>
+    </div>
+
+    <h2 class="title-text">
+        <span th:if="${case.agency != null}" 
+              class="agency-name" 
+              th:text="'[' + ${case.agency.agencyName} + '] '"></span>
+        <span th:text="${case.title}">제목이 들어갑니다</span>
+    </h2>
+
+    <div class="meta-info">
+        <div class="meta-item">
+            <span style="color: #00d2ff;">👁️</span>
+            조회수: <span id="viewCountDisplay" th:text="${case.viewCount}">0</span>
+        </div>
+        
+		<button id="likeButton" 
+		        class="like-btn" 
+		        data-id="[[${case.caseId}]]" 
+                th:onclick="toggleLike([[${case.caseId}]])"> 
+            <span id="likeIcon">❤️</span>
+		    좋아요: <span id="likeCountDisplay" th:text="${case.likeCount}">0</span>
+		</button>
+    </div>
+    <div class="content-box" th:text="${case.content}">
+        여기에 상세 내용이 들어갑니다.
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-5">
+        
+        <div>
+            <a href="/cases" class="btn-neon-back" th:if="${case.typeId == 1}">← 돌아가기</a>
+            <a href="/cases/gov" class="btn-neon-back" th:if="${case.typeId == 2}">← 돌아가기</a>
+            <a href="/cases/tele" class="btn-neon-back" th:if="${case.typeId == 3}">← 돌아가기</a>
+            <a href="/cases/finance" class="btn-neon-back" th:if="${case.typeId == 4}">← 돌아가기</a>
+        </div>
+
+        <div class="d-flex gap-3">
+            <a href="javascript:void(0);" class="btn-neon-edit"
+               th:onclick="'askPasswordAndAction(' + ${case.caseId} + ', \'edit\')'">수정</a>
+            
+            <a href="javascript:void(0);" class="btn-neon-delete"
+               th:onclick="'askPasswordAndAction(' + ${case.caseId} + ', \'delete\')'">삭제</a>
+        </div>
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    /* 좋아요 상태를 저장하기 위한 로컬 스토리지 키 정의 */
+    const LIKE_STATUS_KEY = 'case_like_status_';
+    const caseId = /*[[${case.caseId}]]*/ 0; // Thymeleaf에서 게시글 ID를 가져옵니다.
+
+    // 페이지 로드 시, 사용자가 이미 '좋아요'를 눌렀는지 확인하고 UI를 업데이트합니다.
+    document.addEventListener('DOMContentLoaded', () => {
+        const liked = localStorage.getItem(LIKE_STATUS_KEY + caseId);
+        if (liked === 'true') {
+            document.getElementById('likeButton').classList.add('liked');
+        }
+    });
+
+    // [수정/삭제 비밀번호 검증 함수] (기존 유지)
+    function askPasswordAndAction(id, action) {
+        const pw = prompt("게시글 작성 시 입력한 비밀번호를 입력하세요:");
+        
+        if (pw !== null) {
+            const encodedPw = encodeURIComponent(pw);
+            
+            if (action === 'delete') {
+                location.href = '/cases/' + id + '/delete?pw=' + encodedPw;
+            } else if (action === 'edit') {
+                location.href = '/cases/' + id + '/edit?pw=' + encodedPw;
+            }
+        }
+    }
+
+    // [좋아요 토글 및 API 호출 함수]
+    // caseId를 인자로 받도록 수정합니다.
+    function toggleLike(id) { 
+        const buttonElement = document.getElementById('likeButton');
+        
+        // 함수 인자 'id'를 사용 (caseId 변수나 buttonElement 속성 대신)
+        const currentCaseId = id; 
+        const isLiked = buttonElement.classList.contains('liked');
+        
+        const change = isLiked ? -1 : 1; 
+
+        // 2. API 호출: caseId 변수 대신 인자 id를 사용
+        fetch('/api/cases/like/' + currentCaseId, { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ change: change }) 
+        })
+        .then(response => {
+            if (!response.ok) {
+                // HTTP 오류 코드 처리
+                throw new Error('좋아요 처리 실패: ' + response.statusText);
+            }
+            // 서버에서 새로운 좋아요 카운트를 반환한다고 가정 (JSON: { newCount: 10 })
+            return response.json(); 
+        })
+        .then(data => {
+            // 3. 클라이언트 UI 업데이트
+            
+            document.getElementById('likeCountDisplay').innerText = data.newCount; 
+
+            if (change === 1) {
+                buttonElement.classList.add('liked');
+                localStorage.setItem(LIKE_STATUS_KEY + currentCaseId, 'true');
+            } else {
+                buttonElement.classList.remove('liked');
+                localStorage.setItem(LIKE_STATUS_KEY + currentCaseId, 'false');
+            }
+        })
+        .catch(error => {
+            console.error("좋아요 오류:", error);
+            alert('좋아요 처리에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        });
+    }
+</script>
+
+</body>
+</html>

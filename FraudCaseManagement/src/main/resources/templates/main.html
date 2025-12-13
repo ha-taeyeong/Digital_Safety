@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>디지털 안전불감증 탈출</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <style>
+        /* [전체 배경] */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #4a148c);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* [Hero 섹션] */
+        .hero-section {
+            background: transparent;
+            padding-top: 1rem;
+            padding-bottom: 3rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-title {
+            background: linear-gradient(to right, #ffffff, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+        }
+        
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            color: #fff;
+            font-weight: bold;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        /* [카드 스타일] */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: all 0.3s ease;
+            color: white;
+            min-height: 260px;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* [유형별 네온 액센트] */
+        .glow-job { border-bottom: 3px solid #d946ef; box-shadow: 0 10px 20px rgba(217, 70, 239, 0.1); }
+        .glow-gov { border-bottom: 3px solid #8b5cf6; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.1); }
+        .glow-tele { border-bottom: 3px solid #0ea5e9; box-shadow: 0 10px 20px rgba(14, 165, 233, 0.1); }
+        .glow-finance { border-bottom: 3px solid #f43f5e; box-shadow: 0 10px 20px rgba(244, 63, 94, 0.1); }
+
+        /* [타이틀 색상] */
+        .text-job { color: #f5d0fe; text-shadow: 0 0 10px rgba(217, 70, 239, 0.6); }
+        .text-gov { color: #ddd6fe; text-shadow: 0 0 10px rgba(139, 92, 246, 0.6); }
+        .text-tele { color: #bae6fd; text-shadow: 0 0 10px rgba(14, 165, 233, 0.6); }
+        .text-finance { color: #fecdd3; text-shadow: 0 0 10px rgba(244, 63, 94, 0.6); }
+
+        /* [리스트 아이템] */
+        .list-item-custom {
+            font-size: 1rem;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .list-item-custom a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.2s;
+            opacity: 0.9;
+        }
+        .list-item-custom a:hover {
+            color: #00d2ff;
+            opacity: 1;
+            text-shadow: 0 0 5px rgba(0, 210, 255, 0.5);
+        }
+
+        /* [더보기 버튼] */
+        .btn-more {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: 0.3s;
+        }
+        .btn-more:hover { background: white; color: #333; }
+
+        /* [게임 배너] */
+        .game-banner-bg {
+            background: linear-gradient(90deg, #1cb5e0 0%, #000851 100%);
+            border: 2px solid #00d2ff;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .start-game-btn {
+            background: #ffd700;
+            color: #000;
+            font-weight: 900;
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: none;
+            box-shadow: 0 0 15px #ffd700;
+            transition: 0.3s;
+            z-index: 10;
+            position: relative;
+        }
+        .start-game-btn:hover {
+            background-color: #ffea00;
+            box-shadow: 0 0 25px #ffea00;
+            transform: scale(1.05);
+        }
+
+        /* [차트 컨테이너] Highcharts용 */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        /* Highcharts 크레딧 숨기기 */
+        .highcharts-credits { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid hero-section mb-4">
+    <nav class="d-flex justify-content-end p-3 gap-2" style="position: absolute; top: 0; right: 0; width: 100%;">
+        <a sec:authorize="isAnonymous()" href="/login" class="btn btn-sm btn-outline-light rounded-pill">LOCK ACCESS</a>
+        
+        <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-3">
+            <span class="text-white-50 small">User: <span sec:authentication="name"></span></span>
+            <span sec:authorize="hasRole('ADMIN')" class="badge bg-danger">ADMIN</span>
+            <form th:action="@{/logout}" method="post" style="margin:0;">
+                <button class="btn btn-sm btn-secondary rounded-pill">LOGOUT</button>
+            </form>
+        </div>
+    </nav>
+
+    <div style="margin-top: 4rem;">
+        <span class="hero-badge mb-3 d-inline-block">DIGITAL SAFETY PROTOCOL</span>
+        <h1 class="display-3 fw-bold hero-title mb-3">디지털 안전불감증 탈출</h1>
+        <p class="fs-4 text-light opacity-90">'고액 알바의 유혹' 골든 타임 챌린지</p>
+        <div class="mt-4">
+            <button class="btn btn-outline-light rounded-pill px-4 py-2" style="border-color: rgba(255,255,255,0.5); color:white;">
+                ⚠️ 의심은 습관, 대응은 즉시
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+        
+        <div class="col-lg-5">
+            <div class="chart-container">
+                <h3 class="fw-bold mb-2 text-white ps-2">AhnLab Security Report</h3>
+                <p class="text-white-50 mb-3 ps-2" style="font-size: 1.1rem;">
+                    2025년 3분기 피싱 문자 트렌드 분석
+                </p>
+                <div id="trendChart" style="width: 100%; height: 350px;"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="row g-3">
+                
+                <div class="col-md-6">
+                    <div class="card glass-card glow-job p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="fw-bold mb-0 text-job">구인 사기</h4>
+                            <a href="/cases" class="btn-more px-3 py-1">더보기 +</a>
+                        </div>
+                        <div class="w-100" th:if="${not #lists.isEmpty(recentJobCases)}">
+                            <ul class="list-unstyled mb-0 text-start">
+                                <li th:each="item : ${recentJobCases}" class="list-item-custom">
+                                    <a th:href="@{/cases/{id}(id=${item.id})}">
+                                        📄 <span th:text="${item.title}">제목</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center" th:if="${#lists.isEmpty(recentJobCases)}">
+                            <span class="opacity-50">등록된 사례 없음</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card glass-card glow-gov p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="fw-bold mb-0 text-gov">정부·기관 사칭</h4>
+                            <a href="/cases/gov" class="btn-more px-3 py-1">더보기 +</a>
+                        </div>
+                        <div class="w-100" th:if="${not #lists.isEmpty(recentGovCases)}">
+                            <ul class="list-unstyled mb-0 text-start">
+                                <li th:each="item : ${recentGovCases}" class="list-item-custom">
+                                    <a th:href="@{/cases/{id}(id=${item.id})}">
+                                        🏛️ <span th:text="${item.title}">제목</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center" th:if="${#lists.isEmpty(recentGovCases)}">
+                            <span class="opacity-50">등록된 사례 없음</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card glass-card glow-tele p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="fw-bold mb-0 text-tele">텔레그램 사칭</h4>
+                            <a href="/cases/tele" class="btn-more px-3 py-1">더보기 +</a>
+                        </div>
+                        <div class="w-100" th:if="${not #lists.isEmpty(recentTeleCases)}">
+                            <ul class="list-unstyled mb-0 text-start">
+                                <li th:each="item : ${recentTeleCases}" class="list-item-custom">
+                                    <a th:href="@{/cases/{id}(id=${item.id})}">
+                                        ✈️ <span th:text="${item.title}">제목</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center" th:if="${#lists.isEmpty(recentTeleCases)}">
+                            <span class="opacity-50">등록된 사례 없음</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card glass-card glow-finance p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="fw-bold mb-0 text-finance">금융기관 사칭</h4>
+                            <a href="/cases/finance" class="btn-more px-3 py-1">더보기 +</a>
+                        </div>
+                        <div class="w-100" th:if="${not #lists.isEmpty(recentFinanceCases)}">
+                            <ul class="list-unstyled mb-0 text-start">
+                                <li th:each="item : ${recentFinanceCases}" class="list-item-custom">
+                                    <a th:href="@{/cases/{id}(id=${item.id})}">
+                                        💰 <span th:text="${item.title}">제목</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center" th:if="${#lists.isEmpty(recentFinanceCases)}">
+                            <span class="opacity-50">등록된 사례 없음</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="p-5 game-banner-bg d-flex align-items-center justify-content-between flex-wrap">
+        <div style="z-index: 2;">
+            <h2 class="fw-bold display-6 mb-2 text-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);">⚡ 피싱 예방 미니 게임</h2>
+            <p class="fs-5 mb-0 text-white opacity-90">
+                쏟아지는 피싱 키워드를 빠르게 입력해서 차단하세요!<br>
+                <span style="color: #ffd700; font-weight: bold;">당신의 타자 실력이 안전을 지킵니다.</span>
+            </p>
+        </div>
+        <a href="/game" class="btn btn-lg start-game-btn mt-3 mt-lg-0">
+            🎮 게임 시작하기
+        </a>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    
+    // 1. 데이터 준비
+    // 서버에서 데이터를 못 가져올 경우를 대비해 기본값(fallback) 설정
+    var labels = /*[[${chartLabels}]]*/ ['구인 사기', '기관 사칭', '텔레그램', '금융 사칭', '기타'];
+    var data = /*[[${chartData}]]*/ [35, 25, 20, 15, 5];
+
+    if (!labels || labels.length === 0) {
+        labels = ['구인 사기', '기관 사칭', '텔레그램', '금융 사칭', '기타'];
+        data = [35, 25, 20, 15, 5];
+    }
+
+    // 2. Highcharts 3D 차트 그리기
+    Highcharts.chart('trendChart', {
+        chart: {
+            type: 'pie', // Highcharts에서 도넛차트는 pie + innerSize 옵션 사용
+            backgroundColor: 'transparent', // 배경 투명
+            options3d: {
+                enabled: true,
+                alpha: 45, // 차트 기울기 (위아래)
+                beta: 0
+            }
+        },
+        title: {
+            text: null // 타이틀은 HTML로 처리했으므로 숨김
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            style: { color: '#ffffff' }
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 45, // 3D 두께
+                innerSize: '50%', // 도넛 모양 (구멍 크기)
+                dataLabels: {
+                    enabled: false // 차트 위 글씨 끄기 (깔끔하게)
+                },
+                showInLegend: true // 범례 표시
+            }
+        },
+        legend: {
+            itemStyle: {
+                color: '#e2e8f0', // 범례 글씨 색상 (밝은 회색)
+                fontSize: '14px',
+                fontWeight: 'normal',
+                fontFamily: "'Noto Sans KR', sans-serif"
+            },
+            itemHoverStyle: {
+                color: '#ffffff'
+            }
+        },
+        series: [{
+            name: '비율',
+            data: [
+                { name: labels[0], y: data[0], color: '#d946ef' }, // Magenta
+                { name: labels[1], y: data[1], color: '#8b5cf6' }, // Violet
+                { name: labels[2], y: data[2], color: '#0ea5e9' }, // Cyan
+                { name: labels[3], y: data[3], color: '#f43f5e' }, // Rose
+                { name: labels[4] || '기타', y: data[4] || 0, color: '#94a3b8' } // Gray
+            ]
+        }]
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>
