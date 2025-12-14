@@ -6,123 +6,179 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        /* [전체 레이아웃 & 배경] */
+        /* [기본 폰트 및 배경 설정] */
         body {
             margin: 0; padding: 0;
             background: linear-gradient(135deg, #131224 0%, #1d1b38 100%);
             color: #ffffff;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Pretendard', 'Segoe UI', sans-serif; /* 폰트 변경 권장 */
             min-height: 100vh;
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* [메인 컨테이너] */
+        /* [컨테이너 - 유리 질감 효과] */
         .container {
             width: 100%; max-width: 600px; padding: 40px;
-            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
-            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.5s ease-out;
+            background: rgba(30, 30, 50, 0.5); 
+            backdrop-filter: blur(15px); /* 유리처럼 흐리게 */
+            border-radius: 24px; 
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* [헤더 텍스트] */
+        /* [타이틀] */
         h2 {
-            text-align: center; font-size: 28px; margin-bottom: 30px;
-            text-transform: uppercase; letter-spacing: 2px;
-            color: #d68dfc; text-shadow: 0 0 10px rgba(214, 141, 252, 0.4);
+            text-align: center; font-size: 26px; margin-bottom: 30px;
+            font-weight: 700; letter-spacing: 1px;
+            background: linear-gradient(to right, #d68dfc, #a74cf2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(167, 76, 242, 0.3);
         }
 
-        /* [라벨 스타일] */
+        /* [폼 요소 공통] */
+        .form-group { margin-bottom: 24px; }
+        
         label {
-            display: block; margin-bottom: 8px; margin-left: 5px;
-            font-weight: 600; font-size: 14px; color: #a8a8b3; text-transform: uppercase;
+            display: block; margin-bottom: 10px; margin-left: 4px;
+            font-size: 14px; color: #a8a8b3; font-weight: 500;
         }
 
-        /* [입력 필드 그룹] */
-        .form-group { margin-bottom: 25px; }
-
-        /* [입력창 및 선택창 스타일] */
-        input[type="text"], input[type="password"], textarea, select {
-            width: 100%; padding: 15px;
-            background: rgba(30, 30, 50, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        input, textarea, select {
+            width: 100%; padding: 16px;
+            background: rgba(20, 20, 35, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 12px;
-            color: #fff; font-size: 16px;
-            box-sizing: border-box; transition: all 0.3s ease;
-            appearance: none; /* 브라우저 기본 화살표 제거 */
+            color: #eee; font-size: 15px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            appearance: none;
         }
 
-        /* [Select 커스텀 화살표] */
-        select {
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 16px;
-            cursor: pointer;
-        }
-        /* 드롭다운 옵션 배경색 */
-        select option { background-color: #1d1b38; color: white; }
-
-        input::placeholder, textarea::placeholder { color: #5f5f7a; }
-
-        /* 입력창 포커스 효과 (네온) */
+        /* 포커스 시 네온 효과 */
         input:focus, textarea:focus, select:focus {
-            outline: none; border-color: #bd00ff;
-            box-shadow: 0 0 10px rgba(189, 0, 255, 0.2);
-            background: rgba(30, 30, 50, 0.9);
+            outline: none; 
+            border-color: #a74cf2;
+            box-shadow: 0 0 0 4px rgba(167, 76, 242, 0.1);
+            background: rgba(25, 25, 40, 0.8);
         }
 
-        textarea { resize: vertical; min-height: 150px; line-height: 1.5; }
+        textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
 
-        /* [버튼 영역] */
-        .btn-group { display: flex; gap: 15px; margin-top: 40px; }
+        /* [하단 경고 박스] */
+        .warning-box {
+            background: rgba(255, 71, 87, 0.08);
+            border: 1px solid rgba(255, 71, 87, 0.2);
+            color: #ff6b81;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .warning-box strong { color: #ff4757; }
+
+        /* [버튼 그룹] */
+        .btn-group { display: flex; gap: 12px; margin-top: 10px; }
 
         button {
-            flex: 1; padding: 15px; border: none; border-radius: 50px;
-            font-size: 16px; font-weight: bold; cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            flex: 1; padding: 18px; border: none; border-radius: 14px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease;
         }
 
+        /* 등록 버튼 (그라데이션) */
         .btn-submit {
-            background: linear-gradient(90deg, #a74cf2, #fa66fa); color: white;
-            box-shadow: 0 4px 15px rgba(167, 76, 242, 0.4);
+            background: linear-gradient(135deg, #ce66ff 0%, #9b3dfc 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(155, 61, 252, 0.3);
         }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(167, 76, 242, 0.6); }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(155, 61, 252, 0.4); }
 
+        /* 취소 버튼 */
         .btn-cancel {
-            background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .btn-cancel:hover { background: rgba(255, 255, 255, 0.1); color: white; }
 
         .back-link {
-            display: inline-block; margin-bottom: 20px; color: #a8a8b3;
-            text-decoration: none; font-size: 14px;
-            border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px;
+            display: inline-flex; align-items: center;
+            padding: 8px 16px; margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: #a8a8b3; text-decoration: none; font-size: 13px;
+            transition: 0.3s;
         }
-        .back-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .back-link:hover { background: rgba(255, 255, 255, 0.05); color: #fff; border-color: rgba(255,255,255,0.3); }
 
-        /* [SweetAlert2 커스텀 스타일 - Glassmorphism & Neon] */
+
+        /* -------------------------------------------
+           [SweetAlert2 커스텀 디자인 - 4.14.11.jpg 스타일] 
+           ------------------------------------------- */
         div:where(.swal2-container) div:where(.swal2-popup) {
-            background: rgba(30, 30, 50, 0.95) !important;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(189, 0, 255, 0.5) !important; /* 보라색 네온 */
+            background: #1e1b2e !important; /* 아주 어두운 보라색 배경 */
+            border: 1px solid rgba(167, 76, 242, 0.3) !important; /* 은은한 보라색 테두리 */
             border-radius: 20px !important;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) !important;
-            color: #fff !important;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6) !important;
+            padding: 30px !important;
+            width: 400px !important;
         }
-        div:where(.swal2-container) .swal2-title { color: #fff !important; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
-        div:where(.swal2-container) .swal2-html-container { color: #ccc !important; }
-        
+
+        /* 아이콘 스타일 수정 */
+        div:where(.swal2-icon).swal2-warning {
+            border-color: #fca5a5 !important; /* 연한 붉은색 테두리 */
+            color: #f87171 !important; /* 아이콘 색상 */
+        }
+
+        /* 제목 스타일 */
+        div:where(.swal2-container) .swal2-title {
+            color: #ffffff !important;
+            font-size: 22px !important;
+            margin-top: 20px !important;
+            font-weight: 700 !important;
+        }
+
+        /* 본문 텍스트 스타일 */
+        div:where(.swal2-container) .swal2-html-container {
+            color: #d1d1e0 !important;
+            font-size: 15px !important;
+            line-height: 1.6 !important;
+            margin-top: 15px !important;
+        }
+
+        /* 액션 버튼 컨테이너 */
+        div:where(.swal2-container) .swal2-actions {
+            margin-top: 30px !important;
+            gap: 10px !important;
+        }
+
+        /* '네, 등록합니다' 버튼 */
         div:where(.swal2-container) .swal2-confirm {
-            background: linear-gradient(90deg, #a74cf2, #fa66fa) !important;
-            box-shadow: 0 0 15px rgba(167, 76, 242, 0.4) !important;
-            border-radius: 50px !important;
+            background: linear-gradient(135deg, #e384ff, #a95df2) !important;
+            box-shadow: 0 0 15px rgba(169, 93, 242, 0.5) !important; /* 네온 글로우 */
+            border-radius: 50px !important; /* 둥근 알약 모양 */
+            padding: 12px 30px !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
         }
+
+        /* '취소' 버튼 */
         div:where(.swal2-container) .swal2-cancel {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: #ddd !important;
+            background: #3e3b52 !important; /* 짙은 회색 배경 */
+            color: #ccc !important;
             border-radius: 50px !important;
+            padding: 12px 24px !important;
+            font-size: 15px !important;
+        }
+        
+        div:where(.swal2-container) .swal2-cancel:hover {
+            background: #4a4763 !important;
+            color: #fff !important;
         }
     </style>
 </head>
@@ -138,17 +194,9 @@
         
         <input type="hidden" name="typeId" th:value="${targetType}">
 
-        <div class="form-group">
+        <div class="form-group" th:unless="${targetType == 1}">
             <label for="agencyId">사칭 유형 / 기관</label>
             <select id="agencyId" name="agencyId">
-                <th:block th:if="${targetType == 1}">
-                    <option value="coupang">쿠팡 / 쇼핑몰 알바 사칭</option>
-                    <option value="naver">네이버 / 체험단 모집 사칭</option>
-                    <option value="karrot">당근마켓 알바 사기</option>
-                    <option value="albamon">알바몬/알바천국 이력서 열람</option>
-                    <option value="etc">기타 구인 사기</option>
-                </th:block>
-
                 <th:block th:if="${targetType == 2}">
                     <option value="prosecutor">검찰청 (서울지검 등)</option>
                     <option value="police">경찰청</option>
@@ -177,6 +225,8 @@
             </select>
         </div>
 
+        <input type="hidden" name="agencyId" value="job_scam" th:if="${targetType == 1}">
+
         <div class="form-group">
             <label for="title">사례 제목</label>
             <input type="text" id="title" name="title" placeholder="피해 사례 제목을 입력하세요 (예: 재택 알바 모집)">
@@ -189,7 +239,12 @@
 
         <div class="form-group">
             <label for="guestPw">비밀번호</label>
-            <input type="password" id="guestPw" name="guestPw" placeholder="수정/삭제용 비밀번호">
+            <input type="password" id="guestPw" name="guestPw" placeholder="수정/삭제용 비밀번호 (숫자 4자리 권장)">
+        </div>
+
+        <div class="warning-box">
+            ⚠️ 주제와 관련 없는 글이나 장난성 글은 <br>
+            <strong>예고 없이 삭제</strong>될 수 있습니다.
         </div>
 
         <div class="btn-group">
@@ -202,38 +257,45 @@
 
 <script>
     function validateForm(e) {
-        e.preventDefault(); // 기본 전송 막기
+        e.preventDefault(); // 폼 바로 전송 막기
 
         const form = document.forms['addForm'];
         const title = form['title'].value.trim();
         const content = form['content'].value.trim();
         const guestPw = form['guestPw'].value.trim();
 
-        // SweetAlert로 에러 메시지 표시
+        // 간단 유효성 검사
         if (title === "") {
-            Swal.fire('입력 오류', '제목을 입력해주세요.', 'warning');
+            Swal.fire({ icon: 'warning', title: '입력 오류', text: '제목을 입력해주세요.', confirmButtonColor: '#a74cf2' });
             return false;
         }
         if (content === "") {
-            Swal.fire('입력 오류', '상세 내용을 입력해주세요.', 'warning');
+            Swal.fire({ icon: 'warning', title: '입력 오류', text: '상세 내용을 입력해주세요.', confirmButtonColor: '#a74cf2' });
             return false;
         }
         if (guestPw === "") {
-            Swal.fire('입력 오류', '비밀번호를 입력해주세요.', 'warning');
+            Swal.fire({ icon: 'warning', title: '입력 오류', text: '비밀번호를 입력해주세요.', confirmButtonColor: '#a74cf2' });
             return false;
         }
 
-        // 등록 확인 창
+        // [SweetAlert2 팝업 설정]
         Swal.fire({
             title: '등록 하시겠습니까?',
-            text: "허위 사실 유포 시 법적 책임을 질 수 있습니다.",
-            icon: 'question',
+            // html 속성 사용 (줄바꿈 및 색상 강조)
+            html: `허위 사실 유포 시 법적 책임을 질 수 있으며,<br>
+                   <span style="color: #ff6b81; font-weight: 700; margin-top: 5px; display: inline-block;">
+                       연관 없는 글은 즉시 삭제됩니다.
+                   </span>`,
+            icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: '등록',
-            cancelButtonText: '취소'
+            confirmButtonText: '등록', // 버튼 텍스트 줄바꿈용
+            cancelButtonText: '취소',
+            // 스타일은 위 CSS(.swal2-confirm 등)에서 제어됨
+            buttonsStyling: true, 
+            reverseButtons: true // 버튼 순서 변경 (취소 왼쪽, 확인 오른쪽)
         }).then((result) => {
             if (result.isConfirmed) {
-                form.submit(); // 확인 누르면 실제 전송
+                form.submit(); // 확인 클릭 시 전송
             }
         });
     }

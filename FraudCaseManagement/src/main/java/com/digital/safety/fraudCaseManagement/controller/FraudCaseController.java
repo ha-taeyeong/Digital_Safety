@@ -107,17 +107,4 @@ public class FraudCaseController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-/*
-	@GetMapping("/cases/{id}")
-	public String viewDetail(@PathVariable Long id, Model model) {
-	    // [추가] 1. 해당 ID의 게시글 조회수 1 증가 (DB에 반영됨)
-	    service.increaseViewCount(id); 
-	    
-	    // 2. 증가된 조회수를 포함한 최신 엔티티 조회
-	    FraudCaseEntity entity = service.findCaseById(id);
-	    model.addAttribute("case", entity);
-	    
-	    return "detail";
-	}
-*/
 }

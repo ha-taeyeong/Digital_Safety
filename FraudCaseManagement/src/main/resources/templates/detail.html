@@ -137,12 +137,13 @@
         </span>
     </div>
 
-    <h2 class="title-text">
-        <span th:if="${case.agency != null}" 
-              class="agency-name" 
-              th:text="'[' + ${case.agency.agencyName} + '] '"></span>
-        <span th:text="${case.title}">제목이 들어갑니다</span>
-    </h2>
+	<h2 class="title-text">
+	    <span th:if="${case.typeId != 1 and case.agency != null}" 
+	          class="agency-name" 
+	          th:text="'[' + ${case.agency.agencyName} + '] '"></span>
+	    
+	    <span th:text="${case.title}">제목이 들어갑니다</span>
+	</h2>
 
     <div class="meta-info">
         <div class="meta-item">
