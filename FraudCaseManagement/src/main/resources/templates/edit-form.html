@@ -3,29 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>사례 수정 - 보안 관리자</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* [전체 배경] Deep Space Gradient */
+        /* [전체 배경] */
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             color: #ffffff;
             min-height: 100vh;
             padding: 40px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
 
         /* [Glassmorphism 카드] */
         .glass-card {
-            width: 100%;
-            max-width: 700px;
+            width: 100%; max-width: 700px;
             background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
@@ -35,77 +32,63 @@
         /* [타이틀] */
         .page-title {
             background: linear-gradient(to right, #00d2ff, #3a7bd5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
-            font-weight: 800;
-            margin-bottom: 30px;
+            font-weight: 800; margin-bottom: 30px;
         }
 
-        /* [라벨] */
-        .form-label {
-            color: #e2e8f0;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-
-        /* [입력 필드 공통] Select, Input, Textarea */
+        /* [라벨 & 입력 필드] */
+        .form-label { color: #e2e8f0; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
         .form-control, .form-select {
             background-color: rgba(0, 0, 0, 0.3) !important;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff !important;
-            border-radius: 12px;
-            padding: 12px;
+            color: #ffffff !important; border-radius: 12px; padding: 12px;
             transition: all 0.3s ease;
         }
-
-        /* 포커스 효과 - Cyan Glow */
         .form-control:focus, .form-select:focus {
             background-color: rgba(0, 0, 0, 0.5) !important;
-            border-color: #00d2ff;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-            outline: none;
+            border-color: #00d2ff; box-shadow: 0 0 15px rgba(0, 210, 255, 0.3); outline: none;
         }
+        option { background-color: #24243e; color: white; }
 
-        /* Select 옵션 배경 (브라우저 기본값 방지) */
-        option {
-            background-color: #24243e;
-            color: white;
-        }
-
-        /* [버튼 스타일] */
+        /* [버튼] */
         .btn-cancel {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ccc;
-            border-radius: 50px;
-            padding: 10px 25px;
-            transition: 0.3s;
-            text-decoration: none;
-            display: inline-block;
+            background: transparent; border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ccc; border-radius: 50px; padding: 10px 25px;
+            transition: 0.3s; text-decoration: none; display: inline-block;
         }
-        .btn-cancel:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border-color: #fff;
-        }
+        .btn-cancel:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: #fff; }
 
         .btn-submit {
-            background: linear-gradient(90deg, #00d2ff, #005bea); /* Cyan to Blue */
-            border: none;
-            color: white;
-            border-radius: 50px;
-            padding: 10px 40px;
-            font-weight: bold;
-            box-shadow: 0 0 15px rgba(0, 91, 234, 0.4);
+            background: linear-gradient(90deg, #00d2ff, #005bea);
+            border: none; color: white; border-radius: 50px; padding: 10px 40px;
+            font-weight: bold; box-shadow: 0 0 15px rgba(0, 91, 234, 0.4);
             transition: all 0.3s ease;
         }
         .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
-            background: linear-gradient(90deg, #4facfe, #00f2fe);
-            color: #000;
+            transform: translateY(-2px); box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
+            background: linear-gradient(90deg, #4facfe, #00f2fe); color: #000;
+        }
+
+        /* [SweetAlert2 커스텀 스타일] */
+        div:where(.swal2-container) div:where(.swal2-popup) {
+            background: rgba(30, 30, 50, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 210, 255, 0.5) !important;
+            border-radius: 20px !important;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) !important;
+            color: #fff !important;
+        }
+        div:where(.swal2-container) .swal2-title { color: #fff !important; }
+        div:where(.swal2-container) .swal2-html-container { color: #cbd5e1 !important; }
+        div:where(.swal2-container) .swal2-confirm {
+            background: linear-gradient(90deg, #00d2ff, #007bff) !important;
+            border-radius: 50px !important;
+        }
+        div:where(.swal2-container) .swal2-cancel {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: #ddd !important;
+            border-radius: 50px !important;
         }
     </style>
 </head>
@@ -114,7 +97,7 @@
 <div class="glass-card">
     <h2 class="page-title">구인 사례 수정</h2>
 
-    <form th:action="@{/cases/{id}/edit(id=${case.caseId})}" method="post">
+    <form name="editForm" th:action="@{/cases/{id}/edit(id=${case.caseId})}" method="post" onsubmit="return confirmUpdate(event)">
         
         <input type="hidden" name="guestPw" th:value="${guestPw}">
 
@@ -166,17 +149,37 @@
             <input type="text" name="title" class="form-control" th:value="${case.title}" required>
         </div>
 
-		<div class="mb-5">
-		    <label class="form-label">상세 내용</label>
-		    <textarea name="content" class="form-control" rows="10" th:text="${case.content}" required></textarea>
-		</div>
+        <div class="mb-5">
+            <label class="form-label">상세 내용</label>
+            <textarea name="content" class="form-control" rows="10" th:text="${case.content}" required></textarea>
+        </div>
 
         <div class="d-flex justify-content-end align-items-center gap-3">
-			<button type="submit" class="btn-submit">수정</button>
+            <button type="submit" class="btn-submit">수정 완료</button>
             <a href="javascript:history.back()" class="btn-cancel">취소</a>
         </div>
     </form>
 </div>
+
+<script>
+    function confirmUpdate(e) {
+        e.preventDefault();
+        const form = document.forms['editForm'];
+
+        Swal.fire({
+            title: '수정 내용을 저장하시겠습니까?',
+            text: "기존 내용은 덮어씌워집니다.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '저장',
+            cancelButtonText: '취소'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

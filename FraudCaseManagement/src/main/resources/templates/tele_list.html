@@ -4,337 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>텔레그램 사칭 및 사기 주의 - 보안 경보</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* [전체 배경] Deep Space Gradient */
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: #ffffff;
-            min-height: 100vh;
-            padding: 40px 20px;
+            color: #ffffff; min-height: 100vh; padding: 40px 20px;
         }
-
-        /* [네비게이션] */
         .nav-bar { max-width: 900px; margin: 0 auto 30px auto; }
         .home-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 600;
-            padding: 8px 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
-            transition: 0.3s;
+            display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: rgba(255, 255, 255, 0.7);
+            font-weight: 600; padding: 8px 16px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50px; transition: 0.3s;
         }
-        .home-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border-color: #fff;
-        }
+        .home-btn:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; border-color: #fff; }
 
-        /* [헤더 영역] */
-        header { text-align: center; margin-bottom: 50px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        header { text-align: center; margin-bottom: 50px; max-width: 900px; margin: 0 auto; }
         h1 {
             background: linear-gradient(to right, #00d2ff, #3a7bd5); /* Cyan to Blue */
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 2.2rem;
-            font-weight: 900;
-            margin-bottom: 25px;
-            text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 2.2rem; font-weight: 900; margin-bottom: 25px; text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
         }
-
-        /* [경고 배너] */
         .warning-banner {
-            background: rgba(50, 0, 0, 0.6);
-            border: 1px solid #ff4d4d;
-            border-radius: 16px;
-            padding: 24px;
-            color: #ffcccc;
-            line-height: 1.6;
-            box-shadow: 0 0 20px rgba(255, 77, 77, 0.2);
-            position: relative;
-            overflow: hidden;
+            background: rgba(50, 0, 0, 0.6); border: 1px solid #ff4d4d; border-radius: 16px;
+            padding: 24px; color: #ffcccc; line-height: 1.6;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.2); position: relative; overflow: hidden;
         }
-        .warning-highlight {
-            color: #ff4d4d;
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
-        }
+        .warning-highlight { color: #ff4d4d; font-weight: bold; text-shadow: 0 0 5px rgba(255, 77, 77, 0.5); }
 
-        /* [섹션 타이틀] */
         .section-title {
-            max-width: 900px;
-            margin: 40px auto 20px auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 15px;
+            max-width: 900px; margin: 40px auto 20px auto; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
         }
-        .section-text {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #fff;
-            display: flex; align-items: center; gap: 10px;
-        }
+        .section-text { font-size: 1.4rem; font-weight: 700; color: #fff; }
 
         /* [유형 카드 그리드] */
         .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 900px;
-            margin: 0 auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;
+            max-width: 900px; margin: 0 auto;
         }
         .type-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(0, 210, 255, 0.2);
-            border-radius: 16px;
-            padding: 25px 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 16px; padding: 25px 15px;
+            text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         .type-card:hover {
-            transform: translateY(-5px);
-            background: rgba(0, 210, 255, 0.1);
-            border-color: #00d2ff;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+            transform: translateY(-5px); background: rgba(0, 210, 255, 0.1);
+            border-color: #00d2ff; box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
         }
-        .type-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            display: block;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
-        .type-name {
-            font-weight: 700;
-            color: #00d2ff;
-            margin-bottom: 8px;
-            font-size: 1.1rem;
-        }
-        .type-desc {
-            font-size: 0.9rem;
-            color: #ccc;
-        }
+        .type-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .type-name { font-weight: 700; color: #00d2ff; margin-bottom: 8px; font-size: 1.1rem; }
+        .type-desc { font-size: 0.9rem; color: #ccc; }
 
-        /* [글쓰기 버튼] */
         .write-btn {
-            background: linear-gradient(90deg, #00d2ff, #007bff);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-            transition: 0.3s;
+            background: linear-gradient(90deg, #00d2ff, #007bff); color: white; border: none;
+            padding: 10px 24px; border-radius: 50px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3); transition: 0.3s; text-decoration: none;
         }
-        .write-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(0, 210, 255, 0.5);
-        }
+        .write-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 210, 255, 0.5); color: white;}
 
-        /* [리스트 카드] */
         .board-container { max-width: 900px; margin: 0 auto; }
         .case-list { display: flex; flex-direction: column; gap: 15px; }
-        
         .case-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 24px; transition: all 0.3s ease;
         }
         .case-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(0, 210, 255, 0.4);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.08); border-color: rgba(0, 210, 255, 0.4); transform: translateY(-2px);
         }
-
         .case-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        
         .case-org {
-            background: rgba(0, 210, 255, 0.15);
-            color: #7dd3fc;
-            border: 1px solid rgba(0, 210, 255, 0.4);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            box-shadow: 0 0 8px rgba(0, 210, 255, 0.1);
+            background: rgba(0, 210, 255, 0.15); color: #7dd3fc; border: 1px solid rgba(0, 210, 255, 0.4);
+            padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;
         }
-        .case-date { font-size: 0.85rem; color: rgba(255,255,255,0.4); }
-        
-        .case-title {
-            font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;
-            color: white !important; text-decoration: none; display: block;
-        }
+        .case-title { font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; color: white !important; text-decoration: none; display: block; }
         .case-title:hover { color: #00d2ff !important; text-shadow: 0 0 10px rgba(0, 210, 255, 0.5); }
-        
         .case-content { font-size: 0.95rem; color: #cbd5e1; line-height: 1.6; white-space: pre-wrap; }
 
-        /* [메타 정보 (조회수/좋아요) 스타일] */
-        .meta-info-list {
-            margin-top: 5px; 
-            font-size: 0.85rem;
-            color: #ccc;
-            display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-        }
-        .meta-info-list span {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-        .meta-info-list .views { color: #00d2ff; }
-        .meta-info-list .likes { color: #ff4d4d; }
+        .meta-info-list { margin-top: 5px; font-size: 0.85rem; color: #ccc; display: flex; gap: 15px; justify-content: flex-end; }
+        .meta-info-list .views { color: #00d2ff; } .meta-info-list .likes { color: #ff4d4d; }
         
-        /* [액션 버튼] */
-        .case-actions {
-            margin-top: 10px; 
-            display: flex; 
-            gap: 10px; 
-        }
+        .case-actions { margin-top: 10px; display: flex; gap: 10px; }
         .action-btn {
-            font-size: 0.8rem; padding: 6px 14px;
-            border: 1px solid rgba(255,255,255,0.2); background: transparent;
-            border-radius: 20px; cursor: pointer; color: rgba(255,255,255,0.6);
-            text-decoration: none; transition: 0.3s;
+            font-size: 0.8rem; padding: 6px 14px; border: 1px solid rgba(255,255,255,0.2); background: transparent;
+            border-radius: 20px; cursor: pointer; color: rgba(255,255,255,0.6); text-decoration: none; transition: 0.3s;
         }
         .action-btn:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; }
 
-        /* [페이지네이션] */
-        .pagination .page-link {
-            background-color: transparent; border-color: rgba(255, 255, 255, 0.1); color: #ccc;
-        }
-        .pagination .page-link:hover {
-            background-color: rgba(255, 255, 255, 0.1); color: white;
-        }
-        .pagination .page-item.active .page-link {
-            background-color: #00d2ff; border-color: #00d2ff; color: #000; font-weight: bold;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
-        }
-        .pagination .page-item.disabled .page-link {
-            background-color: transparent; border-color: rgba(255, 255, 255, 0.05); color: #555;
-        }
-
-        /* [모달 공통] */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-overlay.active { display: flex; }
+        .pagination .page-link { background-color: transparent; border-color: rgba(255, 255, 255, 0.1); color: #ccc; }
+        .pagination .page-item.active .page-link { background-color: #00d2ff; border-color: #00d2ff; color: #000; font-weight: bold; }
         
-        .modal-box {
-            background: rgba(20, 30, 45, 0.95);
-            border: 1px solid rgba(0, 210, 255, 0.3);
-            width: 90%; max-width: 500px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(0,0,0,0.7);
-            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-        }
-        /* 모달 상단 네온 라인 */
-        .modal-box::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, #00d2ff, #007bff);
-        }
+        .admin-bar { display: flex; justify-content: flex-end; align-items: center; font-size: 0.9rem; }
+        .admin-badge { background: #00d2ff; color: #000; padding: 5px 12px; border-radius: 20px; font-weight: bold; margin-right: 15px; }
+        .auth-btn { color: rgba(255, 255, 255, 0.6); text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 20px; }
+        .auth-btn:hover { color: white; background: rgba(255, 255, 255, 0.1); border-color: white; }
 
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        .modal-header {
-            padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex; justify-content: space-between; align-items: center;
+        /* [SweetAlert2 커스텀] */
+        div:where(.swal2-container) div:where(.swal2-popup) {
+            background: rgba(20, 30, 45, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 210, 255, 0.5) !important;
+            color: #fff !important;
         }
-        .modal-title { font-size: 1.3rem; font-weight: 800; color: white; }
-        .close-btn { cursor: pointer; font-size: 1.5rem; color: rgba(255,255,255,0.5); border: none; background: none; }
-        .close-btn:hover { color: white; }
-
-        /* [쓰기 모달 폼 & 입력 필드 스타일] */
-        .form-section { padding: 24px; }
-        .form-label { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: #e2e8f0; }
-        
-        .form-input, .form-textarea, .form-select {
-            width: 100%; padding: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            color: white; font-family: inherit;
+        div:where(.swal2-container) .swal2-title { color: #fff !important; }
+        div:where(.swal2-container) .swal2-input {
+            background: rgba(0, 0, 0, 0.5) !important; color: white !important; border: 1px solid rgba(255, 255, 255, 0.2) !important;
         }
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            outline: none; border-color: #00d2ff;
-            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
-            background: rgba(0, 0, 0, 0.5);
-        }
-        .form-textarea { height: 100px; resize: vertical; min-height: 120px; line-height: 1.6; }
-        .form-select option { background-color: #24243e; color: white; }
-
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(90deg, #00d2ff, #007bff);
-            color: white; border: none; padding: 14px;
-            border-radius: 10px; font-weight: bold; font-size: 1rem;
-            cursor: pointer; margin-top: 10px;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
-            transition: 0.3s;
-        }
-        .submit-btn:hover {
-            transform: translateY(-2px); box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
-        }
-
-        /* [추가] 관리자 헤더 스타일 */
-        .admin-bar {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-        .admin-badge {
-            background: #00d2ff;
-            color: #000;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-right: 15px;
-            box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
-        }
-        .auth-btn {
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            transition: 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-        }
-        .auth-btn:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-color: white;
+        div:where(.swal2-container) .swal2-confirm {
+            background: linear-gradient(90deg, #00d2ff, #007bff) !important;
         }
     </style>
 </head>
 <body>
 
-    <nav class="nav-bar" style="display: flex; justify-content: space-between;">
+    <nav class="nav-bar">
         <a href="/" class="home-btn">← 메인으로</a>
-        
-        <div class="admin-bar">
+        <div class="admin-bar" style="float: right;">
             <span th:if="${isAdmin}">
                 <span class="admin-badge">🛡️ 관리자 모드</span>
                 <form th:action="@{/logout}" method="post" style="display:inline;">
                     <button type="submit" class="auth-btn" style="background:none; cursor:pointer;">로그아웃</button>
                 </form>
             </span>
-            
             <span th:unless="${isAdmin}">
                 <a href="/login" class="auth-btn">관리자 로그인</a>
             </span>
@@ -381,7 +174,8 @@
 
     <div class="section-title">
         <span class="section-text">📢 피해 사례</span>
-        <button class="write-btn" onclick="openWriteModal()">새 사례 등록</button>
+        
+        <a href="javascript:void(0)" class="write-btn" onclick="confirmWrite()">새 사례 등록</a>
     </div>
 
     <div class="board-container">
@@ -397,24 +191,17 @@
                         <span class="case-org" th:text="${item.orgName}">유형</span> 
                         <span class="case-date" th:text="${#temporals.format(item.createdDate, 'yyyy.MM.dd')}">2024.12.08</span>
                     </div>
-                    <a th:href="@{/cases/{id}(id=${item.id})}" class="case-title" th:text="${item.title}">
-                        제목
-                    </a>
+                    <a th:href="@{/cases/{id}(id=${item.id})}" class="case-title" th:text="${item.title}">제목</a>
                     <div class="case-content" th:text="${item.description}">내용</div>
-                    <br>
                     <div class="meta-info-list">
                         <span class="views">👁️ <span th:text="${item.viewCount}">0</span></span>
                         <span class="likes">❤️ <span th:text="${item.likeCount}">0</span></span>
                     </div>
-                    
                     <div class="case-actions">
-                        <a href="javascript:void(0)" 
-                           th:onclick="'askPasswordAndAction(' + ${item.id} + ', \'edit\')'" 
-                           class="action-btn">수정</a>
-
-                        <a href="javascript:void(0)" 
-                           th:onclick="'askPasswordAndAction(' + ${item.id} + ', \'delete\')'" 
-                           class="action-btn">삭제</a>
+                        <a href="javascript:void(0)" class="action-btn"
+                           th:onclick="'askPasswordAndAction(' + ${item.id} + ', \'edit\')'">수정</a>
+                        <a href="javascript:void(0)" class="action-btn"
+                           th:onclick="'askPasswordAndAction(' + ${item.id} + ', \'delete\')'">삭제</a>
                     </div>
                 </div>
             </div>
@@ -422,131 +209,85 @@
             <nav aria-label="Page navigation" style="margin-top: 40px;">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:classappend="${cases.first} ? 'disabled'">
-                        <a class="page-link" th:href="@{/cases/tele(page=${cases.number - 1})}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
+                        <a class="page-link" th:href="@{/cases/tele(page=${cases.number - 1})}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
                     </li>
-                    <li class="page-item" 
-                        th:each="page: ${#numbers.sequence(0, cases.totalPages - 1)}"
+                    <li class="page-item" th:each="page: ${#numbers.sequence(0, cases.totalPages - 1)}"
                         th:if="${page >= cases.number - 2 and page <= cases.number + 2}"
                         th:classappend="${page == cases.number} ? 'active'">
                         <a class="page-link" th:text="${page + 1}" th:href="@{/cases/tele(page=${page})}">1</a>
                     </li>
                     <li class="page-item" th:classappend="${cases.last} ? 'disabled'">
-                        <a class="page-link" th:href="@{/cases/tele(page=${cases.number + 1})}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
+                        <a class="page-link" th:href="@{/cases/tele(page=${cases.number + 1})}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
                     </li>
                 </ul>
             </nav>
         </div>
     </div>
 
-    <div id="writeModal" class="modal-overlay" onclick="closeModal(event, 'writeModal')">
-        <div class="modal-box">
-            <div class="modal-header">
-                <span class="modal-title">텔레그램 사칭 사례 등록</span>
-                <button class="close-btn" onclick="closeModalForce('writeModal')">×</button>
-            </div>
-            <div class="form-section">
-                <form name="reportForm" th:action="@{/cases/save}" method="post" onsubmit="return validateForm()">
-                    
-                    <input type="hidden" name="typeId" value="3"> 
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">사기 유형 선택</label>
-                        <select name="agencyId" class="form-select">
-                            <option value="tele_invest">주식/코인 투자방 (리딩방)</option>
-                            <option value="tele_job">쇼핑몰/영화 리뷰 알바</option>
-                            <option value="tele_family">가족/지인 사칭</option>
-                            <option value="tele_romance">로맨스 스캠</option>
-                            <option value="tele_deepfake">딥페이크 협박</option>
-                            <option value="etc">기타</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">제목 (핵심 키워드)</label>
-                        <input type="text" name="title" class="form-input" placeholder="예: 투자 리딩방 수익 인증 요구">
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">내용 (사기꾼 ID, 대화 내용 등)</label>
-                        <textarea name="content" class="form-textarea" placeholder="사기꾼의 텔레그램 ID나 대화 내용을 적어주세요."></textarea>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">비밀번호 (수정/삭제용)</label>
-                        <input type="password" name="guestPw" class="form-input" placeholder="비밀번호 4자리 이상">
-                    </div>
-
-                    <button type="submit" class="submit-btn">등록하기</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <script th:inline="javascript">
-        // [수정] IDE 오류 방지를 위한 Natural Template
         const IS_ADMIN = /*[[${isAdmin}]]*/ false;
         
-        function openWriteModal() {
-            const form = document.forms['reportForm'];
-            if(form) form.reset(); 
-            document.getElementById('writeModal').classList.add('active');
-        }
+        // 1. 글쓰기 확인 (Type 3: 텔레그램)
+        function confirmWrite() {
+           Swal.fire({
+               title: '사례 등록',
+               text: "텔레그램 사칭 사례를 등록하시겠습니까?",
+               icon: 'info',
+               showCancelButton: true,
+               confirmButtonText: '네, 등록합니다',
+               cancelButtonText: '취소'
+           }).then((result) => {
+               if (result.isConfirmed) {
+                   location.href = '/cases/new?type=3'; // type 3
+               }
+           });
+       }
 
-        function closeModal(event, modalId) {
-            if (event.target === document.getElementById(modalId)) {
-                document.getElementById(modalId).classList.remove('active');
-            }
-        }
-        
-        function closeModalForce(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
+        // 2. 비동기 비밀번호 검증 (SweetAlert)
+        async function askPasswordAndAction(id, action) {
+           let pw = null;
+           
+           if (!IS_ADMIN) {
+               const { value: inputPw } = await Swal.fire({
+                   title: '🔒 본인 확인',
+                   text: '게시글 비밀번호를 입력하세요',
+                   input: 'password',
+                   inputPlaceholder: '비밀번호 4자리',
+                   showCancelButton: true,
+                   confirmButtonText: '확인',
+                   cancelButtonText: '취소'
+               });
 
-        function validateForm() {
-            const form = document.forms['reportForm'];
-            const title = form['title'].value.trim();
-            const content = form['content'].value.trim(); 
-            const guestPw = form['guestPw'].value.trim();
+               if (inputPw === undefined) return;
+               if (!inputPw || inputPw.trim() === "") {
+                   Swal.fire('경고', '비밀번호가 입력되지 않았습니다.', 'warning');
+                   return;
+               }
+               pw = inputPw;
+           } else {
+               pw = 'admin_bypass'; 
+           }
 
-            if (title === "") { alert("⚠️ 제목을 입력해주세요."); form['title'].focus(); return false; }
-            if (content === "") { alert("⚠️ 상세 내용을 입력해주세요."); form['content'].focus(); return false; }
-            if (guestPw === "") { alert("⚠️ 비밀번호를 입력해주세요."); form['guestPw'].focus(); return false; }
+           const encodedPw = encodeURIComponent(pw.trim());
 
-            return confirm("🚨 신고 내용을 등록하시겠습니까?\n(허위 사실 기재 시 불이익을 받을 수 있습니다.)");
-        }
+           if (action === 'delete') {
+               const result = await Swal.fire({
+                   title: '정말 삭제하시겠습니까?',
+                   text: "삭제된 데이터는 복구할 수 없습니다.",
+                   icon: 'warning',
+                   showCancelButton: true,
+                   confirmButtonColor: '#ff4d4d',
+                   confirmButtonText: '삭제 실행',
+                   cancelButtonText: '취소'
+               });
 
-        // [수정] 통합된 비밀번호 검증 및 이동 함수 (관리자 우회 포함)
-        function askPasswordAndAction(id, action) {
-            let pw = null;
-            
-            // 관리자가 아닐 때만 비밀번호 입력 받음
-            if (!IS_ADMIN) {
-                pw = prompt("🔒 게시글 비밀번호를 입력하세요:");
-            } else {
-                // 관리자일 경우 우회용 비밀번호 설정
-                pw = 'admin_bypass'; 
-            }
-
-            // 비밀번호 입력 취소 또는 빈 값 체크
-            if (!pw || pw.trim() === "") {
-                if (!IS_ADMIN) alert("비밀번호가 입력되지 않았습니다.");
-                return;
-            }
-
-            const encodedPw = encodeURIComponent(pw.trim());
-            
-            if (action === 'delete') {
-                if (confirm("WARNING: 정말로 영구 삭제하시겠습니까?")) {
-                    location.href = '/cases/' + id + '/delete?pw=' + encodedPw;
-                }
-            } else if (action === 'edit') {
-                location.href = '/cases/' + id + '/edit?pw=' + encodedPw;
-            }
-        }
+               if (result.isConfirmed) {
+                   location.href = '/cases/' + id + '/delete?pw=' + encodedPw;
+               }
+           } else if (action === 'edit') {
+               location.href = '/cases/' + id + '/edit?pw=' + encodedPw;
+           }
+       }
     </script>
 </body>
 </html>

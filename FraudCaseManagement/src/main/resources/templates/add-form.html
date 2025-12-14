@@ -2,152 +2,127 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>New Report Registration</title>
+    <title>새 사례 등록 - 보안 경보</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         /* [전체 레이아웃 & 배경] */
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background: linear-gradient(135deg, #131224 0%, #1d1b38 100%);
             color: #ffffff;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
         }
 
         /* [메인 컨테이너] */
         .container {
-            width: 100%;
-            max-width: 600px;
-            padding: 40px;
-            /* 유리 질감 효과 */
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%; max-width: 600px; padding: 40px;
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
+            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease-out;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* [헤더 텍스트 - JOB SCAM ALERT 느낌] */
+        /* [헤더 텍스트] */
         h2 {
-            text-align: center;
-            font-size: 28px;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #d68dfc; /* 연한 보라색 */
-            text-shadow: 0 0 10px rgba(214, 141, 252, 0.4);
+            text-align: center; font-size: 28px; margin-bottom: 30px;
+            text-transform: uppercase; letter-spacing: 2px;
+            color: #d68dfc; text-shadow: 0 0 10px rgba(214, 141, 252, 0.4);
         }
 
         /* [라벨 스타일] */
         label {
-            display: block;
-            margin-bottom: 8px;
-            margin-left: 5px;
-            font-weight: 600;
-            font-size: 14px;
-            color: #a8a8b3;
-            text-transform: uppercase;
+            display: block; margin-bottom: 8px; margin-left: 5px;
+            font-weight: 600; font-size: 14px; color: #a8a8b3; text-transform: uppercase;
         }
 
         /* [입력 필드 그룹] */
-        .form-group {
-            margin-bottom: 25px;
-        }
+        .form-group { margin-bottom: 25px; }
 
-        /* [입력창 스타일 - 이미지의 카드 느낌] */
-        input[type="text"],
-        input[type="password"],
-        textarea {
-            width: 100%;
-            padding: 15px;
+        /* [입력창 및 선택창 스타일] */
+        input[type="text"], input[type="password"], textarea, select {
+            width: 100%; padding: 15px;
             background: rgba(30, 30, 50, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            color: #fff;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
+            color: #fff; font-size: 16px;
+            box-sizing: border-box; transition: all 0.3s ease;
+            appearance: none; /* 브라우저 기본 화살표 제거 */
         }
 
-        input::placeholder,
-        textarea::placeholder {
-            color: #5f5f7a;
+        /* [Select 커스텀 화살표] */
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            cursor: pointer;
         }
+        /* 드롭다운 옵션 배경색 */
+        select option { background-color: #1d1b38; color: white; }
 
-        /* 입력창 포커스 효과 (네온 글로우) */
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #bd00ff;
+        input::placeholder, textarea::placeholder { color: #5f5f7a; }
+
+        /* 입력창 포커스 효과 (네온) */
+        input:focus, textarea:focus, select:focus {
+            outline: none; border-color: #bd00ff;
             box-shadow: 0 0 10px rgba(189, 0, 255, 0.2);
             background: rgba(30, 30, 50, 0.9);
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 150px;
-            line-height: 1.5;
-        }
+        textarea { resize: vertical; min-height: 150px; line-height: 1.5; }
 
         /* [버튼 영역] */
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 40px;
-        }
+        .btn-group { display: flex; gap: 15px; margin-top: 40px; }
 
         button {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 50px; /* 둥근 캡슐 모양 */
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
+            flex: 1; padding: 15px; border: none; border-radius: 50px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        /* [등록 버튼 - + NEW REPORT 스타일] */
         .btn-submit {
-            background: linear-gradient(90deg, #a74cf2, #fa66fa);
-            color: white;
+            background: linear-gradient(90deg, #a74cf2, #fa66fa); color: white;
             box-shadow: 0 4px 15px rgba(167, 76, 242, 0.4);
         }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(167, 76, 242, 0.6); }
 
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(167, 76, 242, 0.6);
-        }
-
-        /* [취소 버튼 - 이미지의 EDIT/DELETE 버튼 스타일] */
         .btn-cancel {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc;
+            background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc;
         }
+        .btn-cancel:hover { background: rgba(255, 255, 255, 0.1); color: white; }
 
-        .btn-cancel:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        /* [뒤로가기 링크 스타일 (상단 좌측)] */
         .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #a8a8b3;
-            text-decoration: none;
-            font-size: 14px;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
+            display: inline-block; margin-bottom: 20px; color: #a8a8b3;
+            text-decoration: none; font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px;
         }
-        .back-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
+        .back-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        /* [SweetAlert2 커스텀 스타일 - Glassmorphism & Neon] */
+        div:where(.swal2-container) div:where(.swal2-popup) {
+            background: rgba(30, 30, 50, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(189, 0, 255, 0.5) !important; /* 보라색 네온 */
+            border-radius: 20px !important;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) !important;
+            color: #fff !important;
+        }
+        div:where(.swal2-container) .swal2-title { color: #fff !important; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        div:where(.swal2-container) .swal2-html-container { color: #ccc !important; }
+        
+        div:where(.swal2-container) .swal2-confirm {
+            background: linear-gradient(90deg, #a74cf2, #fa66fa) !important;
+            box-shadow: 0 0 15px rgba(167, 76, 242, 0.4) !important;
+            border-radius: 50px !important;
+        }
+        div:where(.swal2-container) .swal2-cancel {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: #ddd !important;
+            border-radius: 50px !important;
         }
     </style>
 </head>
@@ -155,13 +130,52 @@
 
 <div class="container">
     
-    <a href="#" onclick="history.back()" class="back-link">← 돌아가기</a>
+    <a href="javascript:history.back()" class="back-link">← 돌아가기</a>
 
     <h2>새 사례 등록</h2>
 
-    <form th:action="@{/cases/save}" method="post">
+    <form name="addForm" th:action="@{/cases/save}" method="post" onsubmit="return validateForm(event)">
         
         <input type="hidden" name="typeId" th:value="${targetType}">
+
+        <div class="form-group">
+            <label for="agencyId">사칭 유형 / 기관</label>
+            <select id="agencyId" name="agencyId">
+                <th:block th:if="${targetType == 1}">
+                    <option value="coupang">쿠팡 / 쇼핑몰 알바 사칭</option>
+                    <option value="naver">네이버 / 체험단 모집 사칭</option>
+                    <option value="karrot">당근마켓 알바 사기</option>
+                    <option value="albamon">알바몬/알바천국 이력서 열람</option>
+                    <option value="etc">기타 구인 사기</option>
+                </th:block>
+
+                <th:block th:if="${targetType == 2}">
+                    <option value="prosecutor">검찰청 (서울지검 등)</option>
+                    <option value="police">경찰청</option>
+                    <option value="fss">금융감독원</option>
+                    <option value="bluehouse">청와대/정부부처</option>
+                    <option value="etc">기타 공공기관</option>
+                </th:block>
+
+                <th:block th:if="${targetType == 3}">
+                    <option value="tele_invest">주식/코인 리딩방</option>
+                    <option value="tele_romance">로맨스 스캠</option>
+                    <option value="tele_job">쇼핑몰 리뷰 알바</option>
+                    <option value="tele_deepfake">딥페이크 협박</option>
+                    <option value="etc">기타 사이버 사기</option>
+                </th:block>
+
+                <th:block th:if="${targetType == 4}">
+                    <option value="bank_kb">KB국민은행</option>
+                    <option value="bank_shinhan">신한은행</option>
+                    <option value="bank_woori">우리은행</option>
+                    <option value="bank_hana">하나은행</option>
+                    <option value="bank_kakao">카카오뱅크/토스</option>
+                    <option value="card_company">카드사/캐피탈</option>
+                    <option value="etc">기타 금융기관</option>
+                </th:block>
+            </select>
+        </div>
 
         <div class="form-group">
             <label for="title">사례 제목</label>
@@ -170,7 +184,7 @@
 
         <div class="form-group">
             <label for="content">사례 내용</label>
-            <textarea id="content" name="content" placeholder="상세 내용을 입력하세요..."></textarea>
+            <textarea id="content" name="content" placeholder="범인의 연락처, 계좌번호, 대화 내용 등 상세 정보를 입력하세요."></textarea>
         </div>
 
         <div class="form-group">
@@ -185,6 +199,45 @@
 
     </form>
 </div>
+
+<script>
+    function validateForm(e) {
+        e.preventDefault(); // 기본 전송 막기
+
+        const form = document.forms['addForm'];
+        const title = form['title'].value.trim();
+        const content = form['content'].value.trim();
+        const guestPw = form['guestPw'].value.trim();
+
+        // SweetAlert로 에러 메시지 표시
+        if (title === "") {
+            Swal.fire('입력 오류', '제목을 입력해주세요.', 'warning');
+            return false;
+        }
+        if (content === "") {
+            Swal.fire('입력 오류', '상세 내용을 입력해주세요.', 'warning');
+            return false;
+        }
+        if (guestPw === "") {
+            Swal.fire('입력 오류', '비밀번호를 입력해주세요.', 'warning');
+            return false;
+        }
+
+        // 등록 확인 창
+        Swal.fire({
+            title: '등록 하시겠습니까?',
+            text: "허위 사실 유포 시 법적 책임을 질 수 있습니다.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '등록',
+            cancelButtonText: '취소'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit(); // 확인 누르면 실제 전송
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

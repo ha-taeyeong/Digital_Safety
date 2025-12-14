@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>알림</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #0f0c29;
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
+        }
+
+        /* [SweetAlert2 커스텀 디자인 - 네온 다크 테마] */
+        div:where(.swal2-container) div:where(.swal2-popup) {
+            background: rgba(25, 25, 40, 0.95) !important;
+            backdrop-filter: blur(15px);
+            border-radius: 25px !important;
+            padding: 30px !important;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8) !important;
+        }
+
+        /* 제목 스타일 */
+        div:where(.swal2-container) .swal2-title {
+            color: #fff !important;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        /* 본문 내용 스타일 */
+        div:where(.swal2-container) .swal2-html-container {
+            color: #d1d5db !important;
+            font-size: 1.1rem;
+        }
+
+        /* 버튼 공통 스타일 */
+        div:where(.swal2-container) .swal2-confirm {
+            border-radius: 50px !important;
+            font-weight: bold;
+            padding: 12px 30px !important;
+            font-size: 1rem;
+            outline: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<script th:inline="javascript">
+    const message = /*[[${message}]]*/ null;
+    const redirectUrl = /*[[${searchUrl}]]*/ null;
+
+    if (message) {
+        // [수정된 핵심 부분] '일치하지'를 조건에 추가했습니다.
+        const isError = message.includes('실패') || 
+                        message.includes('불일치') || 
+                        message.includes('오류') || 
+                        message.includes('일치하지'); // <-- 추가됨
+
+        // 디자인 테마 설정 (성공: 파랑, 실패: 빨강)
+        const theme = isError ? 
+            { icon: 'error', title: '🚫 인증 실패', color: '#ff4d4d', border: 'rgba(255, 77, 77, 0.5)', shadow: 'rgba(255, 77, 77, 0.4)' } : 
+            { icon: 'success', title: '✅ 처리 완료', color: '#00d2ff', border: 'rgba(0, 210, 255, 0.5)', shadow: 'rgba(0, 210, 255, 0.4)' };
+
+        Swal.fire({
+            icon: theme.icon,
+            title: theme.title,
+            html: message,
+            confirmButtonText: '확인',
+            background: 'rgba(25, 25, 40, 0.95)',
+            color: '#fff',
+            confirmButtonColor: theme.color,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: (popup) => {
+                popup.style.border = `2px solid ${theme.border}`;
+                const confirmBtn = popup.querySelector('.swal2-confirm');
+                if(confirmBtn) confirmBtn.style.boxShadow = `0 0 20px ${theme.shadow}`;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (redirectUrl) {
+                    location.href = redirectUrl;
+                } else {
+                    history.back();
+                }
+            }
+        });
+    } else {
+        if (redirectUrl) location.href = redirectUrl;
+        else history.back();
+    }
+</script>
+
+</body>
+</html>
