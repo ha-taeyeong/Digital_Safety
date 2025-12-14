@@ -5,6 +5,7 @@ import com.digital.safety.fraudCaseManagement.dto.FraudCaseResponse;
 import com.digital.safety.fraudCaseManagement.entity.FraudCaseEntity;
 import com.digital.safety.fraudCaseManagement.service.FraudCaseService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest; // 필수
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,88 +28,122 @@ public class FraudCaseViewController {
 	// --- [조회 기능] ---
 
 	@GetMapping("/cases")
-	public String viewJobFraudList(@RequestParam(defaultValue = "0") int page, Model model) {
+	public String viewJobFraudList(@RequestParam(defaultValue = "0") int page, Model model, HttpServletRequest request) {
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("regiDt").descending());
 		Page<FraudCaseResponse> pagingResult = service.findAllByTypeId(1, pageable);
+		
+        // 관리자 여부 확인하여 모델에 추가
+		Boolean isAdmin = (Boolean) request.getSession().getAttribute("isAdmin");
+        model.addAttribute("isAdmin", isAdmin != null && isAdmin);
+        
 		model.addAttribute("cases", pagingResult);
 		model.addAttribute("categoryName", "구인 사기");
 		model.addAttribute("typeId", 1);
 		return "scam_cases";
 	}
 
+    // ... (다른 목록 조회 메서드들도 위와 동일하게 isAdmin 추가 필요) ...
 	@GetMapping("/cases/gov")
-	public String viewGovFraudList(@RequestParam(defaultValue = "0") int page, Model model) {
+	public String viewGovFraudList(@RequestParam(defaultValue = "0") int page, Model model, HttpServletRequest request) {
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("regiDt").descending());
 		Page<FraudCaseResponse> pagingResult = service.findAllByTypeId(2, pageable);
+        
+        Boolean isAdmin = (Boolean) request.getSession().getAttribute("isAdmin");
+        model.addAttribute("isAdmin", isAdmin != null && isAdmin);
+
 		model.addAttribute("cases", pagingResult);
 		model.addAttribute("categoryName", "정부, 공공기관 사칭");
 		model.addAttribute("typeId", 2);
 		return "gov_list";
 	}
+	// 텔레그램 사기 목록 (Type ID: 3)
+    @GetMapping("/cases/tele")
+    public String viewTeleFraudList(@RequestParam(defaultValue = "0") int page, Model model, HttpServletRequest request) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("regiDt").descending());
+        // 텔레그램 TypeId는 3번으로 가정 (HTML의 input hidden value="3"과 일치)
+        Page<FraudCaseResponse> pagingResult = service.findAllByTypeId(3, pageable);
+        
+        // 관리자 세션 확인 및 모델 추가
+        Boolean isAdmin = (Boolean) request.getSession().getAttribute("isAdmin");
+        model.addAttribute("isAdmin", isAdmin != null && isAdmin);
 
-	@GetMapping("/cases/tele")
-	public String viewTeleFraudList(@RequestParam(defaultValue = "0") int page, Model model) {
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("regiDt").descending());
-		Page<FraudCaseResponse> pagingResult = service.findAllByTypeId(3, pageable);
-		model.addAttribute("cases", pagingResult);
-		model.addAttribute("categoryName", "텔레그램 사칭");
-		model.addAttribute("typeId", 3);
-		return "tele_list";
-	}
+        model.addAttribute("cases", pagingResult);
+        model.addAttribute("categoryName", "텔레그램 사칭");
+        model.addAttribute("typeId", 3);
+        
+        // 리턴하는 문자열은 resources/templates 폴더 안의 HTML 파일명과 일치해야 합니다.
+        // 제공해주신 HTML 파일명이 'tele_list.html'이라면 "tele_list"로 설정하세요.
+        return "tele_list"; 
+    }
 
-	@GetMapping("/cases/finance")
-	public String viewFinanceFraudList(@RequestParam(defaultValue = "0") int page, Model model) {
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("regiDt").descending());
-		Page<FraudCaseResponse> pagingResult = service.findAllByTypeId(4, pageable);
-		model.addAttribute("cases", pagingResult);
-		model.addAttribute("categoryName", "금융기관 사칭");
-		model.addAttribute("typeId", 4);
-		return "finance_list";
-	}
+    // 금융 사기 목록 (Type ID: 4) - 필요시 함께 추가
+    @GetMapping("/cases/finance")
+    public String viewFinanceFraudList(@RequestParam(defaultValue = "0") int page, Model model, HttpServletRequest request) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("regiDt").descending());
+        Page<FraudCaseResponse> pagingResult = service.findAllByTypeId(4, pageable);
+        
+        Boolean isAdmin = (Boolean) request.getSession().getAttribute("isAdmin");
+        model.addAttribute("isAdmin", isAdmin != null && isAdmin);
 
+        model.addAttribute("cases", pagingResult);
+        model.addAttribute("categoryName", "금융/대출 사기");
+        model.addAttribute("typeId", 4);
+        
+        return "finance_list"; // finance_list.html 파일이 있다고 가정
+    }
 	@GetMapping("/cases/{id}")
-	public String viewDetail(@PathVariable Long id, Model model) {
-	    // 1. 조회수 증가 로직 (정상)
-	    service.increaseViewCount(id); 
-	    
-	    // 2. 증가된 조회수를 포함한 최신 엔티티 조회 (정상)
-	    FraudCaseEntity entity = service.findCaseById(id);
-	    model.addAttribute("case", entity);
-	    
-	    return "detail";
+	public String viewDetail(@PathVariable Long id, Model model, HttpServletRequest request) {
+		service.increaseViewCount(id);
+		FraudCaseEntity entity = service.findCaseById(id);
+        
+        // 상세 페이지에서도 관리자 권한이 필요할 수 있으므로 추가
+        Boolean isAdmin = (Boolean) request.getSession().getAttribute("isAdmin");
+        model.addAttribute("isAdmin", isAdmin != null && isAdmin);
+        
+		model.addAttribute("case", entity);
+		return "detail";
 	}
 
-	// --- [CUD 기능 : 비밀번호 검증] ---
+	// --- [CUD 기능 : 관리자 권한 처리 포함] ---
 
-	// 1. 등록 폼
 	@GetMapping("/cases/new")
 	public String viewAddForm(@RequestParam(required = false, defaultValue = "1") Integer type, Model model) {
 		model.addAttribute("targetType", type);
 		return "add-form";
 	}
 
-	// 2. 저장
 	@PostMapping("/cases/save")
 	public String saveCase(FraudCaseRequest request) {
 		service.createCase(request);
-
 		int typeId = request.getTypeId();
-		if (typeId == 2)
-			return "redirect:/cases/gov";
-		else if (typeId == 3)
-			return "redirect:/cases/tele";
-		else if (typeId == 4)
-			return "redirect:/cases/finance";
-		else
-			return "redirect:/cases";
+        // 리다이렉트 로직 단순화
+		if (typeId == 2) return "redirect:/cases/gov";
+		else if (typeId == 3) return "redirect:/cases/tele";
+		else if (typeId == 4) return "redirect:/cases/finance";
+		else return "redirect:/cases";
 	}
 
-	// 3. 수정 폼 진입 (비밀번호 1차 검증)
+	// 3. [수정 폼 진입] 관리자면 비밀번호 검증 패스
 	@GetMapping("/cases/{id}/edit")
 	public String viewEditForm(@PathVariable Long id, @RequestParam("pw") String inputPw, Model model,
-			HttpServletResponse response) throws Exception {
+			HttpServletResponse response, HttpServletRequest request) throws Exception {
 
-		if (!service.verifyPassword(id, inputPw)) {
+		// 세션에서 관리자 여부 확인
+		Boolean isAdmin = (Boolean) request.getSession().getAttribute("isAdmin");
+        boolean isPass = false;
+
+        if (isAdmin != null && isAdmin) {
+            // 관리자라면 무조건 통과
+            isPass = true;
+        } else {
+            // 관리자가 아니면 비밀번호 검증
+            if (service.verifyPassword(id, inputPw)) {
+                isPass = true;
+            }
+        }
+
+        // 검증 실패 시 알림
+		if (!isPass) {
 			response.setContentType("text/html; charset=UTF-8");
 			PrintWriter out = response.getWriter();
 			out.println("<script>alert('비밀번호가 일치하지 않습니다.'); history.back();</script>");
@@ -118,53 +153,64 @@ public class FraudCaseViewController {
 
 		FraudCaseEntity entity = service.findCaseById(id);
 		model.addAttribute("case", entity);
-		model.addAttribute("guestPw", inputPw);
+		model.addAttribute("guestPw", inputPw); // 수정 완료 처리를 위해 비밀번호 전달
 		return "edit-form";
 	}
 
-	// 4. 수정 완료 (비밀번호 2차 검증)
+	// ================================================================
+    // [관리자 권한 처리 추가] 수정 완료 (POST)
+    // ================================================================
 	@PostMapping("/cases/{id}/edit")
-	@ResponseBody
-	public String updateCase(@PathVariable Long id, FraudCaseRequest request) {
-		boolean isUpdated = service.updateCase(id, request);
+    @ResponseBody
+    public String updateCase(@PathVariable Long id, FraudCaseRequest request, HttpServletRequest httpRequest) {
+        
+        // 1. 세션에서 관리자 여부 확인
+        Boolean isAdmin = (Boolean) httpRequest.getSession().getAttribute("isAdmin");
+        
+        // 2. 관리자라면? -> 폼에서 넘어온 비밀번호 무시하고, 진짜 비밀번호로 교체
+        if (isAdmin != null && isAdmin) {
+            // DB에서 현재 게시글 정보를 가져옴
+            FraudCaseEntity realEntity = service.findCaseById(id);
+            
+            // Service가 검증할 수 있도록 요청 객체(DTO)에 진짜 비밀번호를 주입
+            request.setGuestPw(realEntity.getGuestPw());
+        }
 
-		if (isUpdated) {
-			return "<script>alert('수정되었습니다.'); location.href='/cases/" + id + "';</script>";
-		} else {
-			return "<script>alert('비밀번호가 일치하지 않습니다.'); history.back();</script>";
-		}
-	}
+        // 3. Service 호출 (관리자는 위에서 비밀번호를 맞춰줬으므로 무조건 통과됨)
+        boolean isUpdated = service.updateCase(id, request);
 
-	// [기존 코드의 문제점]
-	// 성공 시 무조건 location.href='/cases'로 이동함 -> 구인사기 목록으로 감
+        if (isUpdated) {
+            return "<script>alert('수정되었습니다.'); location.href='/cases/" + id + "';</script>";
+        } else {
+            // 일반 사용자가 비밀번호를 틀렸을 때
+            return "<script>alert('비밀번호가 일치하지 않습니다.'); history.back();</script>";
+        }
+    }
 
-	// [수정된 코드]
-	// 1. 삭제 전 게시글 정보를 조회해서 typeId를 알아냄
-	// 2. typeId에 따라 알맞은 리스트 페이지로 이동시킴
-
+	// 5. [삭제] 관리자면 비밀번호 검증 패스
 	@GetMapping("/cases/{id}/delete")
 	@ResponseBody
-	public String deleteCase(@PathVariable Long id, @RequestParam("pw") String inputPw) {
+	public String deleteCase(@PathVariable Long id, @RequestParam("pw") String inputPw, HttpServletRequest request) {
 
-		// 1. 삭제하려는 게시글이 어떤 게시판 글인지 먼저 조회 (삭제 후엔 조회가 안 되므로 먼저 해야 함)
 		FraudCaseEntity targetCase = service.findCaseById(id);
 		int typeId = targetCase.getTypeId();
 
-		// 2. 삭제 시도
-		boolean isDeleted = service.deleteCase(id, inputPw);
+		Boolean isAdmin = (Boolean) request.getSession().getAttribute("isAdmin");
+		boolean isDeleted = false;
 
-		// 3. 결과 처리
+		if (isAdmin != null && isAdmin) {
+            String realPassword = targetCase.getGuestPw();
+			isDeleted = service.deleteCase(id, realPassword);
+		} else {
+			// 일반 사용자: 입력받은 비밀번호로 시도
+			isDeleted = service.deleteCase(id, inputPw);
+		}
+		
 		if (isDeleted) {
-			// 원래 있던 게시판으로 돌아가기 위한 URL 설정
-			String redirectUrl = "/cases"; // 기본값 (구인사기)
-
-			if (typeId == 2) {
-				redirectUrl = "/cases/gov"; // 정부 사칭
-			} else if (typeId == 3) {
-				redirectUrl = "/cases/tele"; // 텔레그램 사칭
-			} else if (typeId == 4) {
-				redirectUrl = "/cases/finance"; // 금융 사칭
-			}
+			String redirectUrl = "/cases";
+            if (typeId == 2) redirectUrl = "/cases/gov";
+            else if (typeId == 3) redirectUrl = "/cases/tele";
+            else if (typeId == 4) redirectUrl = "/cases/finance";
 
 			return "<script>" + "alert('삭제되었습니다.');" + "location.href='" + redirectUrl + "';" + "</script>";
 		} else {

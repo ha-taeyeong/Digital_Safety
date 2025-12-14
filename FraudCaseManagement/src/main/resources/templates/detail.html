@@ -79,7 +79,37 @@
         }
         .like-btn:hover { background: rgba(255, 255, 255, 0.2); }
         .like-btn.liked { background: #ff4d4d; color: white; box-shadow: 0 0 15px rgba(255, 77, 77, 0.4); }
-    </style>
+		/* [추가] 관리자 헤더 스타일 */
+	    .admin-bar {
+	        display: flex;
+	        justify-content: flex-end;
+	        align-items: center;
+	        margin-bottom: 20px;
+	        font-size: 0.9rem;
+	    }
+	    .admin-badge {
+	        background: #00d2ff;
+	        color: #000;
+	        padding: 5px 12px;
+	        border-radius: 20px;
+	        font-weight: bold;
+	        margin-right: 15px;
+	        box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+	    }
+	    .auth-btn {
+	        color: rgba(255, 255, 255, 0.6);
+	        text-decoration: none;
+	        transition: 0.3s;
+	        border: 1px solid rgba(255, 255, 255, 0.2);
+	        padding: 5px 15px;
+	        border-radius: 20px;
+	    }
+	    .auth-btn:hover {
+	        color: white;
+	        background: rgba(255, 255, 255, 0.1);
+	        border-color: white;
+	    }
+	</style>
 </head>
 <body>
 
@@ -143,27 +173,41 @@
 </div>
 
 <script th:inline="javascript">
-    /* 좋아요 상태를 저장하기 위한 로컬 스토리지 키 정의 */
-    const LIKE_STATUS_KEY = 'case_like_status_';
-    const caseId = /*[[${case.caseId}]]*/ 0; // Thymeleaf에서 게시글 ID를 가져옵니다.
+	const CASE_ID = /*[[${case.caseId}]]*/ 0;
+    const IS_ADMIN = /*[[${isAdmin}]]*/ false;
 
-    // 페이지 로드 시, 사용자가 이미 '좋아요'를 눌렀는지 확인하고 UI를 업데이트합니다.
+    // 예: 게스트면 'case_like_status_1_GUEST', 관리자면 'case_like_status_1_ADMIN'
+    const USER_TYPE = IS_ADMIN ? 'ADMIN' : 'GUEST';
+    const LIKE_STATUS_KEY = 'case_like_status_' + CASE_ID + '_' + USER_TYPE;
+
+    // 1. 페이지 로드 시 좋아요 상태 확인 (해당 사용자 유형의 키만 확인)
     document.addEventListener('DOMContentLoaded', () => {
-        const liked = localStorage.getItem(LIKE_STATUS_KEY + caseId);
+        const liked = localStorage.getItem(LIKE_STATUS_KEY);
         if (liked === 'true') {
-            document.getElementById('likeButton').classList.add('liked');
+            document.querySelector('.likes').classList.add('liked'); // 스타일 클래스 추가 (선택사항)
+            // 만약 하트 색상을 JS로 제어한다면 여기서 처리
         }
     });
 
     // [수정/삭제 비밀번호 검증 함수] (기존 유지)
-    function askPasswordAndAction(id, action) {
-        const pw = prompt("게시글 작성 시 입력한 비밀번호를 입력하세요:");
+	function askPasswordAndAction(id, action) {
+        let pw = null;
+
+        if (!IS_ADMIN) {
+            pw = prompt("게시글 작성 시 입력한 비밀번호를 입력하세요:");
+        } else {
+            // 관리자일 경우, Controller가 인식할 수 있는 우회용 비밀번호 설정
+            pw = 'admin_bypass'; 
+        }
         
         if (pw !== null) {
             const encodedPw = encodeURIComponent(pw);
             
             if (action === 'delete') {
-                location.href = '/cases/' + id + '/delete?pw=' + encodedPw;
+                // 삭제 전 확인 메시지는 관리자에게도 보여주는 것이 안전합니다.
+                if (confirm('WARNING: 정말로 영구 삭제하시겠습니까?')) {
+                    location.href = '/cases/' + id + '/delete?pw=' + encodedPw;
+                }
             } else if (action === 'edit') {
                 location.href = '/cases/' + id + '/edit?pw=' + encodedPw;
             }

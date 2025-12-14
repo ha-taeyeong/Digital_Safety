@@ -14,7 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -43,6 +42,19 @@ public class SecurityConfig {
             .formLogin((form) -> form
                 .loginPage("/login")          // 커스텀 로그인 페이지
                 .defaultSuccessUrl("/", true) // 로그인 성공 시 메인으로
+                .permitAll()
+            )
+            .formLogin(login -> login
+                .loginPage("/login")
+                .successHandler((request, response, authentication) -> {
+                    // 인증된 사용자의 정보(authentication.getName() 등)를 통해 관리자인지 확인
+                    if ("admin".equals(authentication.getName())) {
+                        request.getSession().setAttribute("isAdmin", true);
+                    } else {
+                        request.getSession().setAttribute("isAdmin", false);
+                    }
+                    response.sendRedirect("/"); // 로그인 성공 후 리디렉션
+                })
                 .permitAll()
             )
             .logout((logout) -> logout
